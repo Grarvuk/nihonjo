@@ -1,0 +1,7 @@
+services:
+  nihonjo-app:
+    build: .
+    container_name: nihonjo_web
+    ports:
+      - "8080:80" # L'app sera accessible sur http://localhost:8080
+    restart: always
