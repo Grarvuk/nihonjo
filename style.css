@@ -16,8 +16,22 @@ header { margin: 2rem 0; }
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 500px;
     text-align: center;
+}
+
+body {
+    width: 100%;
+}
+
+.top-nav, 
+#exercice .top-nav, 
+#section-ajout .top-nav, 
+#section-cours .top-nav {
+    max-width: 800px;
+    width: 95vw;
+    margin: 0 auto 10px auto; /* Centre la navigation */
+    display: flex;
+    justify-content: flex-start;
 }
 
 .hidden { display: none !important; }
@@ -360,8 +374,8 @@ select option[value="indéterminé"] {
 
 /* Permet à la carte de s'élargir pour le mode cours */
 .card-wide {
-    max-width: 800px !important;
-    width: 95vw !important;
+    width: 75% !important;
+    margin-left: 10% !important;
 }
 
 .cours-table {
@@ -577,6 +591,50 @@ select option[value="indéterminé"] {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+/* Bouton de suppression dans la gestion du lexique */
+.btn-quit-small {
+    background: transparent;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    padding: 5px 8px !important;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-quit-small:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* On s'assure que le tableau ne déborde pas sur mobile */
+#liste-gestion-lexique {
+    overflow-x: auto;
+}
+
+#import-confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+#import-confirm-modal .modal-content {
+    max-width: 500px; /* On le garde un peu plus étroit pour l'aspect boîte de dialogue */
+    padding: 30px;
+}
+
+#import-confirm-modal h3 {
+    color: #4a90e2;
+    margin-bottom: 20px;
 }
 
 .col-fr { font-weight: 500; width: 30%; }

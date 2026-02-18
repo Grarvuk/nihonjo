@@ -197,6 +197,7 @@ async function initialiserInterface() {
         }
 
         chargerEtatsChapitres();
+        rafraichirListeLexique();
     }
     
     const inputChap = document.getElementById('add-chapitre');
@@ -239,38 +240,62 @@ function creerGroupeCategorie(parent, titre, liste) {
 // --- GESTION DES MOTS PERSOS (BDD) ---
 async function ajouterMot() {
     const getVal = (id) => document.getElementById(id).value.trim();
-    const fr = getVal('add-fr');
-    const kanji = getVal('add-kanji');
-    const kana = getVal('add-kana');
+    
+    const frRaw = getVal('add-fr');
+    const kanjiRaw = getVal('add-kanji');
+    const kanaRaw = getVal('add-kana');
+    const romajiRaw = getVal('add-romaji');
     const thSaisie = getVal('add-thematique');
 
-    if (!fr || (!kanji && !kana) || !thSaisie) {
-        return alert("Français, Japonais et Thématique requis.");
+    // Validation : Au moins un sens français, une forme japonaise et une thématique
+    if (!frRaw || (!kanjiRaw && !kanaRaw) || !thSaisie) {
+        return alert("Français, Japonais (Kanji ou Kana) et Thématique requis.");
     }
 
+    // Utilisation de && comme séparateur
+    const stringToCleanArray = (str) => {
+        if (!str) return [""];
+        // On split par &&, on trim les espaces, et on vire les entrées vides
+        return str.split('&&').map(s => s.trim()).filter(s => s.length > 0);
+    };
+
     const nouveauMot = {
-        fr: fr.split(',').map(s => s.trim()).filter(s => s),
-        jp_romaji: getVal('add-romaji') ? getVal('add-romaji').split(',').map(s => s.trim()) : [""],
-        jp_kanji: kanji ? kanji.split(',').map(s => s.trim()) : [""],
-        jp_kana: kana ? kana.split(',').map(s => s.trim()) : [""],
+        // Champs autorisant les valeurs multiples
+        fr: stringToCleanArray(frRaw),
+        jp_romaji: stringToCleanArray(romajiRaw),
+        jp_kanji: stringToCleanArray(kanjiRaw),
+        jp_kana: stringToCleanArray(kanaRaw),
+        
+        // Champs à valeur unique
         context: getVal('add-context') || "N/A",
         thematiques: [thSaisie], 
-        chapitres: getVal('add-chapitre') ? getVal('add-chapitre').split(',').map(s => s.trim()) : ["personnel"],
+        chapitres: [getVal('add-chapitre') || "personnel"],
+        
         statut: "non acquis"
     };
 
-    // SAUVEGARDE RÉELLE DANS INDEXEDDB
-    await db.motsPerso.add(nouveauMot);
-    
-    await chargerDonnees(); // Recharge la fusion
-    initialiserInterface(); // Update les menus
-    
-    alert("Mot enregistré en local !");
-    
-    // Reset champs
-    ['add-fr','add-romaji','add-kanji','add-kana','add-context','add-thematique'].forEach(id => {
-        document.getElementById(id).value = "";
-    });
+    try {
+        // Ajout dans la base IndexedDB via Dexie
+        await db.motsPerso.add(nouveauMot);
+        
+        // Rafraîchissement global de l'application
+        await chargerDonnees();
+        initialiserInterface();
+        chargerListeGestion(); 
+        
+        alert("Mot enregistré avec succès !");
+        
+        // Reset des champs du formulaire
+        ['add-fr', 'add-romaji', 'add-kanji', 'add-kana', 'add-context', 'add-thematique'].forEach(id => {
+            document.getElementById(id).value = "";
+        });
+        // On réinitialise le chapitre sur sa valeur par défaut
+        document.getElementById('add-chapitre').value = "personnel";
+
+    } catch (e) {
+        console.error("Erreur lors de l'ajout :", e);
+        alert("Erreur lors de l'enregistrement dans la base de données.");
+    }
 }
 
 function genererExport() {
@@ -454,8 +479,9 @@ async function verifierReponse() {
     resTexte.innerText = estCorrect ? "✅ Correct !" : "❌ Mauvaise réponse";
     resTexte.style.color = estCorrect ? "#28a745" : "#dc3545";
 
+    // Dans verifierReponse(), remplace le bloc innerHTML par celui-ci :
     document.getElementById('correction-details').innerHTML = `
-        <div class="correction-item"><strong>Kanjis :</strong> ${mot.jp_kanji[0] || "---"}</div>
+        <div class="correction-item"><strong>Kanjis :</strong> ${mot.jp_kanji.join(" / ") || "---"}</div>
         <div class="correction-item"><strong>Lecture :</strong> ${mot.jp_kana.join(" / ")}</div>
         <div class="correction-item"><strong>Français :</strong> ${mot.fr.join(", ")}</div>
     `;
@@ -469,7 +495,14 @@ async function prochainMot() { // Ajout async
 }
 
 // --- UTILITAIRES ---
-function toggleAjout() { document.getElementById('section-ajout').classList.toggle('hidden'); }
+function toggleAjout() {
+    const section = document.getElementById('section-ajout');
+    section.classList.toggle('hidden');
+    if (!section.classList.contains('hidden')) {
+        chargerListeGestion();
+    }
+}
+
 // Modifier toggleClavier pour appeler la version par défaut
 function toggleClavier() { 
     const container = document.getElementById('keyboard-container');
@@ -540,8 +573,9 @@ async function passerMot() {
     resTexte.innerText = "❌ Mot passé";
     resTexte.style.color = "#dc3545";
 
+    // Dans passerMot(), remplace le bloc innerHTML par celui-ci :
     document.getElementById('correction-details').innerHTML = `
-        <div class="correction-item"><strong>Kanjis :</strong> ${mot.jp_kanji[0] || "---"}</div>
+        <div class="correction-item"><strong>Kanjis :</strong> ${mot.jp_kanji.join(" / ") || "---"}</div>
         <div class="correction-item"><strong>Lecture :</strong> ${mot.jp_kana.join(" / ")}</div>
         <div class="correction-item"><strong>Français :</strong> ${mot.fr.join(", ")}</div>
     `;
@@ -844,4 +878,164 @@ function preparerDrillSelection() {
         const premierMot = drillQueue.shift();
         lancerDrill(premierMot);
     }
+}
+
+async function chargerListeGestion() {
+    const container = document.getElementById('liste-gestion-lexique');
+    if (!container) return;
+
+    const mots = await db.motsPerso.toArray();
+
+    if (mots.length === 0) {
+        container.innerHTML = "<p style='color: #888; font-style: italic;'>Aucun mot dans votre lexique personnel.</p>";
+        return;
+    }
+
+    let html = `
+        <table class="cours-table">
+            <thead>
+                <tr>
+                    <th>Français</th>
+                    <th>Japonais</th>
+                    <th>Thématique</th>
+                    <th style="width: 50px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    mots.forEach(m => {
+        const jpDisplay = m.jp_kanji[0] ? `${m.jp_kanji[0]} (${m.jp_kana[0]})` : m.jp_kana[0];
+        html += `
+            <tr>
+                <td>${m.fr.join(', ')}</td>
+                <td>${jpDisplay}</td>
+                <td><small>${m.thematiques.join(', ')}</small></td>
+                <td>
+                    <button class="btn-quit-small" onclick="supprimerMotPerso(${m.id})" title="Supprimer">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+    });
+
+    container.innerHTML = html + "</tbody></table>";
+}
+
+// Fonction pour supprimer un mot (utile pour la gestion)
+async function supprimerMotPerso(id) {
+    if (confirm("Supprimer ce mot de votre lexique ?")) {
+        await db.motsPerso.delete(id);
+        await chargerDonnees();
+        initialiserInterface(); // Met à jour les menus
+        rafraichirListeLexique(); // Met à jour le tableau
+    }
+}
+
+async function rafraichirListeLexique() {
+    const container = document.getElementById('liste-gestion-lexique');
+    if (!container) return;
+
+    const motsPerso = await db.motsPerso.toArray();
+    
+    if (motsPerso.length === 0) {
+        container.innerHTML = "<p style='color: #888; padding: 20px;'>Aucun mot dans votre lexique personnel.</p>";
+        return;
+    }
+
+    let html = `
+        <table class="cours-table">
+            <thead>
+                <tr>
+                    <th>Français</th>
+                    <th>Japonais</th>
+                    <th>Thématique</th>
+                    <th style="text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    motsPerso.forEach(m => {
+        const jpDisplay = (m.jp_kanji && m.jp_kanji[0]) 
+            ? `<strong>${m.jp_kanji[0]}</strong> (${m.jp_kana[0]})` 
+            : m.jp_kana[0];
+
+        html += `
+            <tr>
+                <td>${m.fr.join(', ')}</td>
+                <td>${jpDisplay}</td>
+                <td><small>${m.thematiques.join(', ')}</small></td>
+                <td style="text-align: center;">
+                    <button class="btn-quit-small" onclick="supprimerMotPerso(${m.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+    });
+
+    container.innerHTML = html + "</tbody></table>";
+}
+
+// --- EXPORT ---
+async function exporterMotsPerso() {
+    const mots = await db.motsPerso.toArray();
+    if (mots.length === 0) return alert("Aucun mot perso à exporter.");
+
+    // On retire l'ID généré par Dexie pour que l'import soit propre
+    const exportData = mots.map(({id, ...reste}) => reste);
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nihonjo_export_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+}
+
+// --- IMPORT ---
+let donneesEnAttenteImport = null;
+
+function gererImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            donneesEnAttenteImport = JSON.parse(e.target.result);
+            document.getElementById('import-confirm-modal').classList.remove('hidden');
+        } catch (err) {
+            alert("Erreur lors de la lecture du fichier JSON.");
+        }
+    };
+    reader.readAsText(file);
+}
+
+function fermerModalImport() {
+    document.getElementById('import-confirm-modal').classList.add('hidden');
+    document.getElementById('import-file').value = "";
+    donneesEnAttenteImport = null;
+}
+
+// Bouton Incrémenter
+document.getElementById('btn-import-increment').onclick = async () => {
+    if (!donneesEnAttenteImport) return;
+    await db.motsPerso.bulkAdd(donneesEnAttenteImport);
+    terminerImport();
+};
+
+// Bouton Écraser
+document.getElementById('btn-import-overwrite').onclick = async () => {
+    if (!donneesEnAttenteImport) return;
+    if (confirm("Êtes-vous sûr de vouloir supprimer TOUS vos mots personnels actuels ?")) {
+        await db.motsPerso.clear();
+        await db.motsPerso.bulkAdd(donneesEnAttenteImport);
+        terminerImport();
+    }
+};
+
+async function terminerImport() {
+    await chargerDonnees();
+    initialiserInterface();
+    fermerModalImport();
+    alert("Importation réussie !");
 }

@@ -15,7 +15,7 @@
 
 <main>
         <section id="menu">
-            <div class="card">
+            <div class="card card-wide">
                 <h3>Paramètres de session</h3>
                 
                 <label for="select-thematique">Thématique :</label>
@@ -109,7 +109,7 @@
             <div class="top-nav">
                 <button class="btn-secondary btn-small" onclick="fermerDrill()"><i class="fa-solid fa-arrow-left"></i> Annuler</button>
             </div>
-            <div class="card">
+            <div class="card card-wide">
                 <p class="statut-badge">Mode Répétition</p>
                 <h3 id="drill-mot-fr" style="color: #4a90e2;">---</h3>
                 <p id="drill-aide-jp" style="font-size: 1.2rem; margin-bottom: 20px;">---</p>
@@ -132,7 +132,7 @@
                 </button>
             </div>
 
-            <div class="card">
+            <div class="card card-wide">
                 <p id="info-progress" class="statut-badge"></p>
                 <div class="score-container">
                     Score : <span id="current-score">0</span> / <span id="total-questions">0</span>
@@ -177,42 +177,77 @@
 
         </section>
 
-        <section id="section-ajout" class="hidden">
-            <div class="top-nav" style="max-width: 500px; width: 90vw; display: flex; margin-bottom: 10px;">
-                <button class="btn-secondary btn-small" onclick="toggleAjout()">
-                    <i class="fa-solid fa-arrow-left"></i> Fermer
-                </button>
-            </div>
+    <section id="section-ajout" class="hidden">
+        <div class="top-nav" style=" width: 90vw; display: flex; margin-bottom: 10px;">
+            <button class="btn-secondary btn-small" onclick="toggleAjout()">
+                <i class="fa-solid fa-arrow-left"></i> Fermer
+            </button>
+        </div>
 
-            <div class="card">
-                <h3>Ajouter un nouveau mot</h3>
-                <div class="form-grid">
-                    <input type="text" id="add-fr" placeholder="Français (ex: Eau, Flotte)">
-                    <input type="text" id="add-romaji" placeholder="Romaji (ex: mizu)">
-                    <input type="text" id="add-kanji" placeholder="Kanji (ex: 水)">
-                    <input type="text" id="add-kana" placeholder="Kana (ex: みず)">
-                    <input type="text" id="add-context" placeholder="Contexte (ex: Boisson)">
-                    <div class="select-wrapper">
-                        <label for="add-thematique" style="font-size: 0.8rem; color: #666;">Thématique (choisir ou taper) :</label>
-                        <input type="text" id="add-thematique" list="liste-thematiques-existantes" placeholder="Ex: Pokémon, Cuisine...">
-                        <datalist id="liste-thematiques-existantes"></datalist>
-                    </div>
-                    <input type="text" id="add-chapitre" value="personnel" placeholder="Chapitres (ex: chapitre_1)">
+        <div class="card card-wide">
+            <h3>Ajouter un nouveau mot</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">
+                <i class="fa-solid fa-code"></i> Utilisez <b>&&</b> pour séparer plusieurs valeurs (ex: Thé <b>&&</b> Thé vert)
+            </p>
+            <div class="form-grid">
+                <input type="text" id="add-fr" placeholder="Français (ex: Eau && Flotte)">
+                <input type="text" id="add-romaji" placeholder="Romaji (ex: ocha && cha)">
+                <input type="text" id="add-kanji" placeholder="Kanji (ex: お茶 && 茶)">
+                <input type="text" id="add-kana" placeholder="Kana (ex: おちゃ && ちゃ)">
+                <input type="text" id="add-context" placeholder="Contexte (ex: Boisson) - Valeur unique">
+                <div class="select-wrapper">
+                    <label for="add-thematique" style="font-size: 0.8rem; color: #666;">Thématique (choisir ou taper) :</label>
+                    <input type="text" id="add-thematique" list="liste-thematiques-existantes" placeholder="Ex: Pokémon && Cuisine...">
+                    <datalist id="liste-thematiques-existantes"></datalist>
                 </div>
-                
-                <div class="btn-group">
-                    <button class="btn-primary" id="btn-ajouter-mot">Ajouter à la session</button>
-                </div>
-                <button class="btn-quit" onclick="toggleAjout()">Fermer</button>
+                <input type="text" id="add-chapitre" value="personnel" placeholder="Chapitre (ex: chapitre_1) - Valeur unique">
             </div>
-        </section>
+            
+            <div class="btn-group">
+                <button class="btn-primary" id="btn-ajouter-mot">Ajouter à la session</button>
+            </div>
+            <button class="btn-quit" onclick="toggleAjout()">Fermer</button>
+        </div>
+
+        <div class="card card-wide" style="margin-top: 20px;">
+            <div class="btn-group" style="margin-top: 20px; gap: 10px;">
+                <button class="btn-secondary btn-small" onclick="exporterMotsPerso()">
+                    <i class="fa-solid fa-download"></i> Exporter mots JSON
+                </button>
+                
+                <button class="btn-secondary btn-small" onclick="document.getElementById('import-file').click()">
+                    <i class="fa-solid fa-upload"></i> Importer mots JSON
+                </button>
+                <input type="file" id="import-file" class="hidden" accept=".json" onchange="gererImport(event)">
+            </div>
+            <h3>Lexique Personnel</h3>
+            <div id="liste-gestion-lexique">
+            </div>
+        </div>
+
+        <div id="import-confirm-modal" class="hidden">
+            <div class="card modal-content">
+                <h3>Type d'importation</h3>
+                <p>Comment souhaitez-vous intégrer ces nouveaux mots ?</p>
+                <div class="btn-group" style="flex-direction: column; gap: 10px;">
+                    <button class="btn-primary" id="btn-import-increment">
+                        <i class="fa-solid fa-plus"></i> Incrémenter (Ajouter aux mots existants)
+                    </button>
+                    <button class="btn-special" id="btn-import-overwrite" style="background-color: #e67e22;">
+                        <i class="fa-solid fa-eraser"></i> Écraser (Supprimer tout le lexique perso actuel)
+                    </button>
+                    <button class="btn-secondary" onclick="fermerModalImport()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </section>
     </main>
     <button class="btn-secondary btn-small" onclick="retourMenu()">
         <i class="fa-solid fa-house"></i> Menu
     </button>
 
     <div id="export-modal" class="hidden">
-        <div class="card modal-content">
+        <div class="card card-wide modal-content">
             <h3>Code à copier</h3>
             <p>Copier-collez dans le fichier <strong>data_perso.js</strong> :</p>
             <textarea id="json-output" readonly onclick="this.select()"></textarea>
