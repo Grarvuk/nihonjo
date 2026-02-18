@@ -197,12 +197,11 @@
                         <input type="text" id="add-thematique" list="liste-thematiques-existantes" placeholder="Ex: Pokémon, Cuisine...">
                         <datalist id="liste-thematiques-existantes"></datalist>
                     </div>
-                    <input type="text" id="add-chapitre" value="extra_chapitre" placeholder="Chapitres (ex: chapitre_1)">
+                    <input type="text" id="add-chapitre" value="personnel" placeholder="Chapitres (ex: chapitre_1)">
                 </div>
                 
                 <div class="btn-group">
                     <button class="btn-primary" id="btn-ajouter-mot">Ajouter à la session</button>
-                    <button class="btn-save" onclick="genererExport()">📤 Exporter vers data.js</button>
                 </div>
                 <button class="btn-quit" onclick="toggleAjout()">Fermer</button>
             </div>
@@ -227,7 +226,7 @@
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
     <script src="config.js"></script>
     <script src="data_cours.js"></script>
-    <!-- <script src="data_perso.js"></script> -->
+    <script src="config_chapitres.js"></script>
     <script src="script.js"></script>
     <script src="liste_kanjis.js"></script>
     

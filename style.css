@@ -15,7 +15,7 @@ header { margin: 2rem 0; }
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 90vw;
+    width: 100%;
     max-width: 500px;
     text-align: center;
 }
@@ -126,27 +126,52 @@ hr {
 
 #checkboxes-chapitres {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: 15px 0;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    overflow-y: auto;
+    flex-direction: column; /* Force l'empilement vertical */
+    gap: 15px;              /* Espacement entre les catégories */
+    width: 100%;            /* Prend toute la largeur de la carte */
+    background: transparent;
+    padding: 0;
+}
+
+.categorie-groupe {
+    display: block;         /* Comportement de bloc standard */
+    width: 100%;            /* Largeur totale */
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: left;
+    box-sizing: border-box; /* Évite que le padding ne dépasse de la largeur */
+}
+
+.categorie-groupe h4 {
+    margin: 0 0 10px 0;
+    color: #4a90e2;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.categorie-items {
+    display: flex;
+    flex-wrap: wrap;        /* Permet de revenir à la ligne si besoin */
+    gap: 10px;              /* Espace entre les badges de chapitres */
+    margin-top: 10px;
 }
 
 .chapitre-item {
+    flex: 0 1 auto;         /* Ne force pas une largeur fixe */
     font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: white;
-    padding: 6px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    white-space: nowrap; /* Évite que le texte d'un chapitre passe sur deux lignes */
-    transition: background-color 0.2s;
+    background: #f8f9fa;
+    padding: 8px 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;    /* Look "pilule" plus moderne */
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .chapitre-item:hover {

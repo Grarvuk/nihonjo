@@ -154,37 +154,86 @@ async function initialiserInterface() {
     }
 
     // --- 5. GESTION DYNAMIQUE DES CHAPITRES ---
+    // Dans initialiserInterface(), remplace la partie du containerCheck par ceci :
     const containerCheck = document.getElementById('checkboxes-chapitres');
     if (containerCheck) {
         containerCheck.innerHTML = "";
-        // On se base sur le dictionnaire fusionné incluant la BDD
-        const listeChap = [...new Set(dictionnaireComplet.flatMap(m => m.chapitres || []))];
         
-        listeChap.forEach(chap => {
-            const div = document.createElement('div');
-            div.className = 'chapitre-item';
-            
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.id = `chap-${chap}`;
-            cb.value = chap;
-            cb.checked = true; 
-            cb.addEventListener('change', sauvegarderEtatsChapitres);
+        const tousLesChapitresExistants = [...new Set(dictionnaireComplet.flatMap(m => m.chapitres || []))];
+        let chapitresTraites = new Set();
+        const categoriesFinales = {};
 
-            const lb = document.createElement('label');
-            lb.htmlFor = `chap-${chap}`;
-            lb.innerText = chap.replace(/_/g, ' ');
+        // 1. Trier les catégories par ordre
+        const categoriesTriees = Object.entries(STRUCTURE_CHAPITRES)
+            .sort((a, b) => a[1].ordre - b[1].ordre);
 
-            div.appendChild(cb);
-            div.appendChild(lb);
-            containerCheck.appendChild(div);
+        // 2. Remplir les catégories définies
+        categoriesTriees.forEach(([nomCategorie, config]) => {
+            const chapitresPresents = config.items
+                .filter(item => tousLesChapitresExistants.includes(item.id))
+                .sort((a, b) => a.ordre - b.ordre)
+                .map(item => item.id);
+
+            if (chapitresPresents.length > 0) {
+                categoriesFinales[nomCategorie] = chapitresPresents;
+                chapitresPresents.forEach(id => chapitresTraites.add(id));
+            }
         });
+
+        // 3. LOGIQUE DE REPORT (Correction de la casse ici)
+        const restants = tousLesChapitresExistants.filter(c => !chapitresTraites.has(c));
+        if (restants.length > 0) {
+            // On cherche "Personnel" avec la majuscule pour matcher ta config
+            if (categoriesFinales["Personnel"]) {
+                categoriesFinales["Personnel"] = [...categoriesFinales["Personnel"], ...restants.sort()];
+            } else {
+                categoriesFinales["Personnel"] = restants.sort();
+            }
+        }
+
+        // 4. Rendu final
+        for (const [titre, liste] of Object.entries(categoriesFinales)) {
+            creerGroupeCategorie(containerCheck, titre, liste);
+        }
 
         chargerEtatsChapitres();
     }
     
     const inputChap = document.getElementById('add-chapitre');
-    if(inputChap) inputChap.value = "extra_chapitre";
+    if(inputChap) inputChap.value = "personnel";
+}
+
+// Fonction utilitaire pour créer le DOM d'une catégorie
+function creerGroupeCategorie(parent, titre, liste) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'categorie-groupe';
+    groupDiv.innerHTML = `<h4>${titre}</h4>`;
+    
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'categorie-items';
+
+    liste.forEach(chap => {
+        const div = document.createElement('div');
+        div.className = 'chapitre-item';
+        
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `chap-${chap}`;
+        cb.value = chap;
+        cb.checked = true; 
+        cb.addEventListener('change', sauvegarderEtatsChapitres);
+
+        const lb = document.createElement('label');
+        lb.htmlFor = `chap-${chap}`;
+        lb.innerText = chap.replace(/_/g, ' ');
+
+        div.appendChild(cb);
+        div.appendChild(lb);
+        itemsDiv.appendChild(div);
+    });
+
+    groupDiv.appendChild(itemsDiv);
+    parent.appendChild(groupDiv);
 }
 
 // --- GESTION DES MOTS PERSOS (BDD) ---
@@ -206,7 +255,7 @@ async function ajouterMot() {
         jp_kana: kana ? kana.split(',').map(s => s.trim()) : [""],
         context: getVal('add-context') || "N/A",
         thematiques: [thSaisie], 
-        chapitres: getVal('add-chapitre') ? getVal('add-chapitre').split(',').map(s => s.trim()) : ["extra_chapitre"],
+        chapitres: getVal('add-chapitre') ? getVal('add-chapitre').split(',').map(s => s.trim()) : ["personnel"],
         statut: "non acquis"
     };
 
