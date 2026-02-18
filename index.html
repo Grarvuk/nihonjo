@@ -74,7 +74,7 @@
         </section>
 
 <section id="section-cours" class="hidden">
-    <div class="top-nav" style="max-width: 800px; width: 95vw; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+    <div class="top-nav centrer" style="max-width: 800px; width: 95vw; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
         <button class="btn-secondary btn-small" onclick="retourMenu()">
             <i class="fa-solid fa-house"></i> Menu
         </button>
@@ -106,7 +106,7 @@
     
 </section>
         <section id="section-ecriture" class="hidden">
-            <div class="top-nav">
+            <div class="top-nav centrer">
                 <button class="btn-secondary btn-small" onclick="fermerDrill()"><i class="fa-solid fa-arrow-left"></i> Annuler</button>
             </div>
             <div class="card card-wide">
@@ -126,7 +126,7 @@
         </section>
 
         <section id="exercice" class="hidden">
-            <div class="top-nav">
+            <div class="top-nav centrer">
                 <button class="btn-secondary btn-small" onclick="retourMenu()">
                     <i class="fa-solid fa-house"></i> Menu
                 </button>
@@ -178,12 +178,13 @@
         </section>
 
     <section id="section-ajout" class="hidden">
-        <div class="top-nav" style=" width: 90vw; display: flex; margin-bottom: 10px;">
+        <br>
+        <div class="centrer" style="">
             <button class="btn-secondary btn-small" onclick="toggleAjout()">
-                <i class="fa-solid fa-arrow-left"></i> Fermer
+                <i class="fa-solid fa-arrow-left"></i> Fermer gestion lexique
             </button>
         </div>
-
+        <br>
         <div class="card card-wide">
             <h3>Ajouter un nouveau mot</h3>
             <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">
@@ -211,11 +212,11 @@
 
         <div class="card card-wide" style="margin-top: 20px;">
             <div class="btn-group" style="margin-top: 20px; gap: 10px;">
-                <button class="btn-secondary btn-small" onclick="exporterMotsPerso()">
+                <button class="btn-primary btn-small" onclick="exporterMotsPerso()">
                     <i class="fa-solid fa-download"></i> Exporter mots JSON
                 </button>
                 
-                <button class="btn-secondary btn-small" onclick="document.getElementById('import-file').click()">
+                <button class="btn-primary btn-small" onclick="document.getElementById('import-file').click()">
                     <i class="fa-solid fa-upload"></i> Importer mots JSON
                 </button>
                 <input type="file" id="import-file" class="hidden" accept=".json" onchange="gererImport(event)">

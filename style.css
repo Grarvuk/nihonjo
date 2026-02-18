@@ -632,6 +632,11 @@ select option[value="indéterminé"] {
     padding: 30px;
 }
 
+.centrer{
+    display: flex !important;
+    justify-content: center !important;
+}
+
 #import-confirm-modal h3 {
     color: #4a90e2;
     margin-bottom: 20px;
