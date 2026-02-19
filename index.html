@@ -74,7 +74,23 @@
                 <br>
                 <button onclick="toggleAjout()" class="btn-toggle-admin">+ Gérer le lexique</button>
             </div>
-            
+            <div class="card-wide" style="margin-top: 25px; padding: 15px; border: 1px dashed #4a90e2; border-radius: 12px; background: rgba(74, 144, 226, 0.05);">
+                <h3 style="color: #4a90e2; margin-bottom: 10px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-sync"></i> Synchronisation des Acquis
+                </h3>
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">
+                    Sauvegardez ou restaurez uniquement vos états d'apprentissage (Acquis / À revoir).
+                </p>
+                <div class="btn-group" style="display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="exporterProgressionGlobale()" style="flex: 1; background-color: #2ecc71;">
+                        <i class="fa-solid fa-download"></i> Exporter
+                    </button>
+                    <button class="btn-secondary" onclick="document.getElementById('import-progression-file').click()" style="flex: 1;">
+                        <i class="fa-solid fa-upload"></i> Importer
+                    </button>
+                    <input type="file" id="import-progression-file" class="hidden" accept=".json" onchange="gererImportProgression(event)">
+                </div>
+            </div>
 
         </section>
 

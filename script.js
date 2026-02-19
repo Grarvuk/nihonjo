@@ -336,7 +336,7 @@ async function demarrer(type) {
     
     // Filtrage
     for (const m of dictionnaireComplet) {
-        const etatMot = await chargerEtatMot(m.fr[0]);
+        const etatMot = await chargerEtatMot(m.fr);
         
         const matchThematique = (thChoisie === "tous" || m.thematiques.includes(thChoisie));
         const matchChapitre = m.chapitres.some(c => chapitresChoisis.includes(c));
@@ -702,14 +702,26 @@ function chargerEtatsChapitres() {
 }
 
 // --- PROGRESSION (BDD remplace LocalStorage) ---
-async function sauvegarderProgression(motFr, nouvelEtat) {
-    // .put() fait un update si existe, sinon un add
-    await db.progression.put({ fr: motFr, statut: nouvelEtat });
+async function sauvegarderProgression(tableauxFr, nouvelEtat) {
+    const synonymes = Array.isArray(tableauxFr) ? tableauxFr : [tableauxFr];
+    
+    // On enregistre le statut pour chaque synonyme dans la base
+    for (const sens of synonymes) {
+        await db.progression.put({ fr: sens, statut: nouvelEtat });
+    }
 }
 
-async function chargerEtatMot(motFr) {
-    const res = await db.progression.get(motFr);
-    return res ? res.statut : "non acquis";
+async function chargerEtatMot(tableauxFr) {
+    // Si on reçoit une string par erreur, on la met en tableau
+    const synonymes = Array.isArray(tableauxFr) ? tableauxFr : [tableauxFr];
+    
+    // On cherche dans la table progression si l'un des synonymes existe
+    for (const sens of synonymes) {
+        const res = await db.progression.get(sens);
+        if (res) return res.statut; // Dès qu'on en trouve un, on renvoie son statut
+    }
+    
+    return "non acquis"; // Par défaut
 }
 
 // --- COURS & EXERCICES (Mis à jour pour être Async) ---
@@ -721,7 +733,7 @@ async function demarrerCours() {
 
     const motsFiltres = [];
     for (const m of dictionnaireComplet) {
-        const etatMot = await chargerEtatMot(m.fr[0]);
+        const etatMot = await chargerEtatMot(m.fr);
         const matchThematique = (thChoisie === "tous" || m.thematiques.includes(thChoisie));
         const matchChapitre = m.chapitres.some(c => chapitresChoisis.includes(c));
         const matchEtat = (etatFiltre === "tous" || etatMot === etatFiltre);
@@ -1058,4 +1070,127 @@ async function terminerImport() {
     initialiserInterface();
     fermerModalImport();
     alert("Importation réussie !");
+}
+
+// --- FONCTIONS DE SYNCHRONISATION DE LA PROGRESSION ---
+
+// ==========================================
+// FONCTIONS DE SYNC DE LA PROGRESSION (CORRIGÉES)
+// ==========================================
+
+async function exporterProgressionGlobale() {
+    // 1. On récupère TOUTE la table de progression
+    const progressionEnBDD = await db.progression.toArray();
+    
+    if (progressionEnBDD.length === 0) {
+        return alert("Aucune donnée de progression à exporter.");
+    }
+
+    // 2. On construit l'export
+    const exportData = progressionEnBDD.map(p => {
+        // On cherche le mot dans dictionnaireComplet. 
+        // On vérifie si p.fr est présent dans la liste des traductions fr du mot.
+        const mot = dictionnaireComplet.find(m => m.fr.includes(p.fr));
+        
+        if (mot) {
+            return {
+                etat: p.statut,
+                fr: mot.fr,
+                jp_romaji: mot.jp_romaji,
+                jp_kanji: mot.jp_kanji,
+                jp_kana: mot.jp_kana
+            };
+        }
+        return null;
+    }).filter(item => item !== null);
+
+    const blob = new Blob([JSON.stringify({ 
+        type: "nihonjo_progression", 
+        donnees: exportData,
+        count: exportData.length 
+    }, null, 2)], {type: "application/json"});
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ma_progression_nihonjo_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function gererImportProgression(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const json = JSON.parse(e.target.result);
+            if (json.type !== "nihonjo_progression" || !json.donnees) {
+                throw new Error("Format de fichier non reconnu.");
+            }
+            await importerProgressionDonnees(json.donnees);
+        } catch (err) {
+            alert("Erreur lors de l'import : " + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+async function importerProgressionDonnees(donnees) {
+    let countAcquis = 0;
+    let countRevoir = 0;
+    let countEchecs = 0;
+
+    // Helper interne pour vérifier si deux tableaux partagent au moins un élément textuel réel
+    const ontUnPointCommun = (arrayLocal, arrayImport) => {
+        if (!arrayLocal || !arrayImport) return false;
+        
+        // On normalise tout et on filtre les entrées vides ou nulles
+        const cleanLocal = arrayLocal
+            .map(v => normaliser(v))
+            .filter(v => v && v.length > 0);
+            
+        const cleanImport = arrayImport
+            .map(v => normaliser(v))
+            .filter(v => v && v.length > 0);
+
+        // On cherche si un élément de l'import existe dans le dictionnaire local
+        return cleanImport.some(valeur => cleanLocal.includes(valeur));
+    };
+
+    for (const item of donnees) {
+        // Recherche du mot avec priorité : Français, puis Kanji, puis Kana
+        const matchLocal = dictionnaireComplet.find(m => {
+            return ontUnPointCommun(m.fr, item.fr) || 
+                   ontUnPointCommun(m.jp_kanji, item.jp_kanji) || 
+                   ontUnPointCommun(m.jp_kana, item.jp_kana);
+        });
+
+        if (matchLocal) {
+            const idCle = matchLocal.fr[0]; // On utilise le premier sens FR comme clé unique pour la progression
+            const statutActuel = await chargerEtatMot(idCle);
+
+            // On ne met à jour que si l'état importé apporte une progression
+            // (ex: passer de 'non acquis' à 'acquis' ou 'a revoir')
+            if (item.etat === "acquis" && statutActuel !== "acquis") {
+                await db.progression.put({ fr: idCle, statut: "acquis" });
+                countAcquis++;
+            } 
+            else if (item.etat === "a revoir" && statutActuel === "non acquis") {
+                await db.progression.put({ fr: idCle, statut: "a revoir" });
+                countRevoir++;
+            }
+        } else {
+            countEchecs++;
+            console.warn("[IMPORT] Aucun match trouvé pour :", item.fr);
+        }
+    }
+
+    alert(`Synchronisation terminée !
+✅ ${countAcquis} nouveaux 'Acquis'
+📝 ${countRevoir} nouveaux 'À revoir'
+❌ ${countEchecs} mots non trouvés dans le dictionnaire actuel.`);
+    
+    location.reload(); 
 }
