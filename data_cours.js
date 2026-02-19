@@ -365,7 +365,7 @@ const dictionnaire_cours = [
     "jp_romaji": ["kore"],
     "jp_kanji": [""],
     "jp_kana": ["これ"],
-    "context": "objet proche du locuteur",
+    "context": "objet proche du locuteur (sans objets suivi après)",
     "thematiques": ["objet"],
     "chapitres": ["vocabulaire_p_45"],
     "statut": "non acquis"
@@ -375,7 +375,7 @@ const dictionnaire_cours = [
     "jp_romaji": ["sore"],
     "jp_kanji": [""],
     "jp_kana": ["それ"],
-    "context": "objet proche de l'interlocuteur",
+    "context": "objet proche de l'interlocuteur (sans objets suivi après)",
     "thematiques": ["objet"],
     "chapitres": ["vocabulaire_p_45"],
     "statut": "non acquis"
@@ -385,7 +385,7 @@ const dictionnaire_cours = [
     "jp_romaji": ["are"],
     "jp_kanji": [""],
     "jp_kana": ["あれ"],
-    "context": "objet éloigné des deux",
+    "context": "objet éloigné des deux (sans objets suivi après)",
     "thematiques": ["objet"],
     "chapitres": ["vocabulaire_p_45"],
     "statut": "non acquis"

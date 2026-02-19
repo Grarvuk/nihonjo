@@ -312,24 +312,31 @@ function genererExport() {
 }
 
 // --- LOGIQUE EXERCICE ---
-async function demarrer(type) { // Ajout de async
+async function demarrer(type) {
     mode = type;
     document.getElementById('section-ajout').classList.add('hidden');
 
+    // Réinitialisation du score
     scoreSession = 0;
     questionsRepondues = 0;
     document.getElementById('current-score').innerText = "0";
     document.getElementById('total-questions').innerText = "0";
 
+    // Récupération des filtres
     const thChoisie = document.getElementById('select-thematique').value;
     const etatFiltre = document.getElementById('filter-etat').value;
     const checkboxes = document.querySelectorAll('#checkboxes-chapitres input:checked');
     const chapitresChoisis = Array.from(checkboxes).map(cb => cb.value);
+    
+    // RÉCUPÉRATION DE LA LIMITE (Nettoyage de la valeur)
+    const limiteSaisie = document.getElementById('session-limit').value;
+    const limite = parseInt(limiteSaisie); 
 
-    // --- FILTRAGE ASYNC ---
     let motsFiltres = [];
+    
+    // Filtrage
     for (const m of dictionnaireComplet) {
-        const etatMot = await chargerEtatMot(m.fr[0]); // On attend la réponse de la BDD
+        const etatMot = await chargerEtatMot(m.fr[0]);
         
         const matchThematique = (thChoisie === "tous" || m.thematiques.includes(thChoisie));
         const matchChapitre = m.chapitres.some(c => chapitresChoisis.includes(c));
@@ -340,19 +347,32 @@ async function demarrer(type) { // Ajout de async
         }
     }
 
+    // Filtre spécifique pour les modes Kanji
     if (mode === 'lecture-kanji' || mode === 'transcription') {
         motsFiltres = motsFiltres.filter(m => m.jp_kanji && m.jp_kanji[0] && m.jp_kanji[0].trim() !== "");
     }
 
-    if (motsFiltres.length === 0) return alert("Aucun mot trouvé.");
+    if (motsFiltres.length === 0) return alert("Aucun mot trouvé avec ces filtres.");
+
+    // --- MÉLANGE ALÉATOIRE ---
+    motsFiltres.sort(() => Math.random() - 0.5);
+
+    // --- APPLICATION DE LA LIMITE ---
+    // On vérifie si limite est un nombre valide et supérieur à 0
+    if (!isNaN(limite) && limite > 0) {
+        console.log(`[DEBUG] Limite appliquée : ${limite} mots sur ${motsFiltres.length} trouvés.`);
+        motsFiltres = motsFiltres.slice(0, limite);
+    } else {
+        console.log(`[DEBUG] Aucune limite appliquée (${motsFiltres.length} mots).`);
+    }
 
     sessionMots = motsFiltres;
-    sessionMots.sort(() => Math.random() - 0.5);
     indexActuel = 0;
     
+    // Changement d'écran
     document.getElementById('menu').classList.add('hidden');
     document.getElementById('exercice').classList.remove('hidden');
-    await afficherMot(); // Ajout de await
+    await afficherMot();
 }
 
 async function afficherMot() { // Ajout de async

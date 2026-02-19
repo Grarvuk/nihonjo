@@ -31,6 +31,11 @@
                     <option value="non acquis">Non acquis</option>
                 </select>
 
+                <div class="select-wrapper">
+                    <label for="session-limit">Nombre de mots (0 ou vide = tous) :</label>
+                    <input type="number" id="session-limit" min="0" placeholder="Tous" style="margin-top: 5px;">
+                </div>
+
                 <div id="chapitres-container">
                     <div class="bulk-actions" style="margin-bottom: 10px;">
                         <button type="button" class="btn-small" onclick="modifierTousChapitres(true)">Tout cocher</button>
