@@ -464,7 +464,7 @@ const dictionnaire_cours = [
     "fr": ["yen"],
     "jp_romaji": ["~en"],
     "jp_kanji": ["〜円"],
-    "jp_kana": ["〜えん"],
+    "jp_kana": ["〜えん", "えん"],
     "context": "monnaie japonaise",
     "thematiques": ["argent", "compteur"],
     "chapitres": ["vocabulaire_p_45"],
