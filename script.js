@@ -9,6 +9,9 @@ let questionsRepondues = 0;
 let drillQueue = []; // File d'attente des mots à travailler
 let isMultipleDrill = false; // Flag pour savoir si on enchaîne les mots
 
+// 👇 AJOUTE CETTE LIGNE JUSTE ICI 👇
+let inputCibleClavier = 'reponse-utilisateur';
+
 let drillState = {
     mot: null,
     currentSuccess: 0,
@@ -46,7 +49,7 @@ const katakanaGrid = [
     "ヤ", null, "ユ", null, "ヨ",
     "ラ", "リ", "ル", "レ", "ロ",
     "ワ", null, null, null, "ヲ",
-    "ン", null, null, null, null
+    "ン", "〜", "ー", null, null
 ];
 
 const dakutenHira = [
@@ -80,13 +83,14 @@ function obtenirConsigne(modeActuel) {
 }
 // --- INITIALISATION ---
 window.onload = async () => {
-    // Fusion des deux sources au chargement (Variables issues de data_cours.js et data_perso.js)
+    // On attend le chargement complet (statique + BDD)
     await chargerDonnees();
-    dictionnaireComplet = [...dictionnaire_cours];
     
-    console.log(`[DEBUG] Dictionnaire chargé : ${dictionnaire_cours.length} cours.`);
+    // SUPPRIMÉ : dictionnaireComplet = [...dictionnaire_cours]; (ça écrasait ta base de données !)
+    console.log(`[DEBUG] Dictionnaire chargé : ${dictionnaireComplet.length} mots au total.`);
     
-    initialiserInterface();
+    // On attend que l'interface se construise avant d'attacher des événements
+    await initialiserInterface(); 
 
     const btnAjout = document.getElementById("btn-ajouter-mot");
     if(btnAjout) {
@@ -103,11 +107,10 @@ async function chargerDonnees() {
 }
 
 async function initialiserInterface() {
-    // --- 0. RÉCUPÉRATION DES DONNÉES DE LA BDD ---
-    // On attend que Dexie récupère les mots personnels
+    // --- 0. RÉCUPÉRATION DES DONNÉES ---
     const motsPersoBDD = await db.motsPerso.toArray();
     
-    // On met à jour le dictionnaire complet (Fusion statique + BDD)
+    // Fusion statique + BDD
     dictionnaireComplet = [...dictionnaire_cours, ...motsPersoBDD];
 
     // --- 1. COLLECTE DYNAMIQUE DES THÉMATIQUES ---
@@ -118,7 +121,7 @@ async function initialiserInterface() {
         .filter(t => t && t !== "Sans thématique")
         .sort((a, b) => a.localeCompare(b));
 
-    // --- 2. REMPLISSAGE DU SELECT DE FILTRAGE (Menu principal) ---
+    // --- 2. REMPLISSAGE DU SELECT DE FILTRAGE ---
     const selectFiltre = document.getElementById('select-thematique');
     if (selectFiltre) {
         selectFiltre.innerHTML = '<option value="tous">Toutes</option>';
@@ -130,7 +133,7 @@ async function initialiserInterface() {
         });
     }
 
-    // --- 3. REMPLISSAGE DU SELECT D'AJOUT (Formulaire) ---
+    // --- 3. REMPLISSAGE DU SELECT D'AJOUT ---
     const selectAjout = document.getElementById('add-thematique');
     if (selectAjout && selectAjout.tagName === 'SELECT') {
         selectAjout.innerHTML = ''; 
@@ -142,7 +145,7 @@ async function initialiserInterface() {
         });
     }
 
-    // --- 4. REMPLISSAGE DE LA DATALIST (Autocomplete) ---
+    // --- 4. REMPLISSAGE DE LA DATALIST ---
     const datalistAjout = document.getElementById('liste-thematiques-existantes');
     if (datalistAjout) {
         datalistAjout.innerHTML = ''; 
@@ -154,21 +157,47 @@ async function initialiserInterface() {
     }
 
     // --- 5. GESTION DYNAMIQUE DES CHAPITRES ---
-    // Dans initialiserInterface(), remplace la partie du containerCheck par ceci :
     const containerCheck = document.getElementById('checkboxes-chapitres');
     if (containerCheck) {
         containerCheck.innerHTML = "";
         
-        const tousLesChapitresExistants = [...new Set(dictionnaireComplet.flatMap(m => m.chapitres || []))];
+        const chapitresLocalStorage = getChapitresDepuisStorage();
+        const tousLesChapitresExistants = [...new Set([
+            ...dictionnaireComplet.flatMap(m => m.chapitres || []),
+            ...chapitresLocalStorage
+        ])];
+
+        // --- NOUVEAU : Remplissage de la liste de sélection multiple ---
+        const importSelect = document.getElementById('new-chap-import');
+        if (importSelect) {
+            importSelect.innerHTML = "";
+            const optGroupTheme = document.createElement('optgroup');
+            optGroupTheme.label = "--- THÉMATIQUES ---";
+            toutesLesThematiques.forEach(t => {
+                let opt = new Option(t, "theme:" + t);
+                optGroupTheme.appendChild(opt);
+            });
+            
+            const optGroupChap = document.createElement('optgroup');
+            optGroupChap.label = "--- CHAPITRES ---";
+            tousLesChapitresExistants.forEach(c => {
+                let opt = new Option(c.replace(/_/g, ' '), "chap:" + c);
+                optGroupChap.appendChild(opt);
+            });
+            
+            importSelect.appendChild(optGroupTheme);
+            importSelect.appendChild(optGroupChap);
+        }
+
         let chapitresTraites = new Set();
         const categoriesFinales = {};
 
-        // 1. Trier les catégories par ordre
-        const categoriesTriees = Object.entries(STRUCTURE_CHAPITRES)
-            .sort((a, b) => a[1].ordre - b[1].ordre);
+        const configStructure = typeof STRUCTURE_CHAPITRES !== 'undefined' ? STRUCTURE_CHAPITRES : {};
+        const categoriesTriees = Object.entries(configStructure).sort((a, b) => a[1].ordre - b[1].ordre);
 
-        // 2. Remplir les catégories définies
+        // Remplissage classique via config
         categoriesTriees.forEach(([nomCategorie, config]) => {
+            if (nomCategorie === "Personnel") return;
             const chapitresPresents = config.items
                 .filter(item => tousLesChapitresExistants.includes(item.id))
                 .sort((a, b) => a.ordre - b.ordre)
@@ -180,18 +209,26 @@ async function initialiserInterface() {
             }
         });
 
-        // 3. LOGIQUE DE REPORT (Correction de la casse ici)
+        // --- NOUVEAU : Récupération des catégories personnalisées ---
+        const mappingCategories = JSON.parse(localStorage.getItem('nihonjo_chap_categories') || '{}');
         const restants = tousLesChapitresExistants.filter(c => !chapitresTraites.has(c));
-        if (restants.length > 0) {
-            // On cherche "Personnel" avec la majuscule pour matcher ta config
-            if (categoriesFinales["Personnel"]) {
-                categoriesFinales["Personnel"] = [...categoriesFinales["Personnel"], ...restants.sort()];
-            } else {
-                categoriesFinales["Personnel"] = restants.sort();
-            }
+        
+        restants.forEach(chap => {
+            const catName = mappingCategories[chap] || "Personnel"; // Fallback sur Personnel
+            if (!categoriesFinales[catName]) categoriesFinales[catName] = [];
+            categoriesFinales[catName].push(chap);
+        });
+
+        // Tri propre de la catégorie Personnel si elle existe
+        if (categoriesFinales["Personnel"]) {
+            categoriesFinales["Personnel"].sort((a, b) => {
+                if (a === "personnel") return -1;
+                if (b === "personnel") return 1;
+                return a.localeCompare(b);
+            });
         }
 
-        // 4. Rendu final
+        // Rendu final
         for (const [titre, liste] of Object.entries(categoriesFinales)) {
             creerGroupeCategorie(containerCheck, titre, liste);
         }
@@ -202,6 +239,8 @@ async function initialiserInterface() {
     
     const inputChap = document.getElementById('add-chapitre');
     if(inputChap) inputChap.value = "personnel";
+
+    chargerGestionChapitres();
 }
 
 // Fonction utilitaire pour créer le DOM d'une catégorie
@@ -237,7 +276,6 @@ function creerGroupeCategorie(parent, titre, liste) {
     parent.appendChild(groupDiv);
 }
 
-// --- GESTION DES MOTS PERSOS (BDD) ---
 async function ajouterMot() {
     const getVal = (id) => document.getElementById(id).value.trim();
     
@@ -246,51 +284,54 @@ async function ajouterMot() {
     const kanaRaw = getVal('add-kana');
     const romajiRaw = getVal('add-romaji');
     const thSaisie = getVal('add-thematique');
+    const chapSaisi = getVal('add-chapitre') || "personnel"; // On récupère le chapitre ici
 
     // Validation : Au moins un sens français, une forme japonaise et une thématique
     if (!frRaw || (!kanjiRaw && !kanaRaw) || !thSaisie) {
         return alert("Français, Japonais (Kanji ou Kana) et Thématique requis.");
     }
 
-    // Utilisation de && comme séparateur
     const stringToCleanArray = (str) => {
         if (!str) return [""];
-        // On split par &&, on trim les espaces, et on vire les entrées vides
         return str.split('&&').map(s => s.trim()).filter(s => s.length > 0);
     };
 
     const nouveauMot = {
-        // Champs autorisant les valeurs multiples
         fr: stringToCleanArray(frRaw),
         jp_romaji: stringToCleanArray(romajiRaw),
         jp_kanji: stringToCleanArray(kanjiRaw),
         jp_kana: stringToCleanArray(kanaRaw),
-        
-        // Champs à valeur unique
         context: getVal('add-context') || "N/A",
         thematiques: [thSaisie], 
-        chapitres: [getVal('add-chapitre') || "personnel"],
-        
+        chapitres: [chapSaisi], // Utilisation du chapitre saisi
         statut: "non acquis"
     };
 
     try {
+        // --- ÉTAPE CRUCIALE : Gestion du chapitre dans le LocalStorage ---
+        // Cette fonction vérifie les doublons (config vs local) avant d'ajouter
+        filtrerEtSauvegarderChapitre(chapSaisi);
+
         // Ajout dans la base IndexedDB via Dexie
         await db.motsPerso.add(nouveauMot);
         
         // Rafraîchissement global de l'application
-        await chargerDonnees();
-        initialiserInterface();
-        chargerListeGestion(); 
+        // (chargerDonnees recharge le dictionnaire, initialiserInterface reconstruit les filtres)
+        await chargerDonnees(); 
+        await initialiserInterface(); 
+        if (typeof chargerListeGestion === 'function') chargerListeGestion(); 
         
         alert("Mot enregistré avec succès !");
         
         // Reset des champs du formulaire
         ['add-fr', 'add-romaji', 'add-kanji', 'add-kana', 'add-context', 'add-thematique'].forEach(id => {
-            document.getElementById(id).value = "";
+            const el = document.getElementById(id);
+            if (el) el.value = "";
         });
+        
         // On réinitialise le chapitre sur sa valeur par défaut
-        document.getElementById('add-chapitre').value = "personnel";
+        const inputChap = document.getElementById('add-chapitre');
+        if (inputChap) inputChap.value = "personnel";
 
     } catch (e) {
         console.error("Erreur lors de l'ajout :", e);
@@ -452,6 +493,7 @@ function genererMotATrous(mot) {
 }
 
 async function verifierReponse() {
+    console.log("🔍 Vérification de la réponse...");
     const feedback = document.getElementById('feedback');
     if (!feedback.classList.contains('hidden')) {
         await prochainMot();
@@ -464,6 +506,29 @@ async function verifierReponse() {
     
     if (rawRep === "") return;
 
+    // --- BLOC DE LOGS POUR DEBUG ---
+    console.group("🔍 DEBUG VALIDATION");
+    console.log("Mode actuel :", mode);
+    console.log("Saisie brute :", rawRep);
+    console.log("Saisie normalisée :", `"${repNormalisee}"`);
+    
+    // On prépare les réponses attendues selon le mode pour les afficher
+    let reponsesAttendues = [];
+    if (mode === 'transcription') {
+        reponsesAttendues = [...mot.jp_kana, ...mot.jp_kanji];
+    } else if (mode === 'lecture-kanji') {
+        reponsesAttendues = mot.fr;
+    } else if (mode === 'fr-jp') {
+        reponsesAttendues = [...mot.jp_romaji, ...mot.jp_kana, ...mot.jp_kanji];
+    } else {
+        reponsesAttendues = mot.fr;
+    }
+
+    // On logue chaque réponse attendue après normalisation pour voir les différences
+    const reponsesNormalisees = reponsesAttendues.map(v => normaliser(v));
+    console.log("Réponses attendues (normalisées) :", reponsesNormalisees);
+    // -------------------------------
+
     let estCorrect = false;
 
     // --- LOGIQUE DE VÉRIFICATION PAR MODE ---
@@ -471,6 +536,7 @@ async function verifierReponse() {
         estCorrect = [...mot.jp_kana, ...mot.jp_kanji].some(v => normaliser(v) === repNormalisee);
     } else if (mode.startsWith('trous')) {
         const attenduNormalise = normaliser(motCompletAttendu);
+        console.log("Attendu (trou) normalisé :", `"${attenduNormalise}"`);
         estCorrect = (repNormalisee === attenduNormalise || motCompletAttendu.includes(rawRep));
     } else if (mode === 'lecture-kanji') {
         estCorrect = mot.fr.some(f => normaliser(f) === repNormalisee);
@@ -480,26 +546,25 @@ async function verifierReponse() {
         estCorrect = mot.fr.some(f => normaliser(f) === repNormalisee);
     }
 
+    console.log("Résultat final :", estCorrect ? "✅ MATCH" : "❌ NO MATCH");
+    console.groupEnd();
+
     // --- GESTION DU SCORE ---
     questionsRepondues++;
     if (estCorrect) {
         scoreSession++;
     }
     
-    // Mise à jour de l'affichage du score
     document.getElementById('current-score').innerText = scoreSession;
     document.getElementById('total-questions').innerText = questionsRepondues;
 
-    // --- SAUVEGARDE DE LA PROGRESSION ---
     const nouvelEtat = estCorrect ? "acquis" : "a revoir";
-    await sauvegarderProgression(mot.fr[0], nouvelEtat); // Ajout await
+    await sauvegarderProgression(mot.fr[0], nouvelEtat);
 
-    // --- FEEDBACK VISUEL ---
     const resTexte = document.getElementById('resultat-texte');
     resTexte.innerText = estCorrect ? "✅ Correct !" : "❌ Mauvaise réponse";
     resTexte.style.color = estCorrect ? "#28a745" : "#dc3545";
 
-    // Dans verifierReponse(), remplace le bloc innerHTML par celui-ci :
     document.getElementById('correction-details').innerHTML = `
         <div class="correction-item"><strong>Kanjis :</strong> ${mot.jp_kanji.join(" / ") || "---"}</div>
         <div class="correction-item"><strong>Lecture :</strong> ${mot.jp_kana.join(" / ")}</div>
@@ -520,14 +585,64 @@ function toggleAjout() {
     section.classList.toggle('hidden');
     if (!section.classList.contains('hidden')) {
         chargerListeGestion();
+        chargerGestionChapitres(); // Affiche les chapitres (AJOUTÉ
     }
 }
 
 // Modifier toggleClavier pour appeler la version par défaut
 function toggleClavier() { 
+    inputCibleClavier = 'reponse-utilisateur';
     const container = document.getElementById('keyboard-container');
+    
+    // On s'assure de ramener le clavier dans la zone d'exercice si on l'avait utilisé dans l'ajout
+    const zoneExercice = document.querySelector('#exercice .card');
+    if (container.parentNode !== zoneExercice) {
+        zoneExercice.appendChild(container);
+    }
+    
     container.classList.toggle('hidden'); 
     if(!document.getElementById('keyboard-grid').innerHTML) genererClavier('hira'); 
+}
+
+// 2. NOUVELLE fonction dédiée au formulaire d'ajout
+function afficherClavierAjout(idInput) {
+    const container = document.getElementById('keyboard-container');
+    
+    // Si on clique sur le même bouton et que le clavier est ouvert, on le ferme
+    if (inputCibleClavier === idInput && !container.classList.contains('hidden')) {
+        container.classList.add('hidden');
+        return;
+    }
+
+    inputCibleClavier = idInput; // On mémorise quel input est ciblé
+    
+    // On déplace le HTML du clavier juste sous le champ cliqué
+    const wrapperParent = document.getElementById(idInput).parentNode;
+    wrapperParent.after(container); 
+
+    container.classList.remove('hidden');
+    if(!document.getElementById('keyboard-grid').innerHTML) genererClavier('hira');
+}
+
+// 3. Modification de la touche pour injecter dans la BONNE cible
+function creerToucheClavier(char) {
+    const b = document.createElement('button');
+    if (char) {
+        b.className = 'key';
+        b.innerText = char;
+        b.onclick = () => { 
+            // On cible dynamiquement l'input défini par la variable globale
+            const input = document.getElementById(inputCibleClavier);
+            if (input) {
+                input.value += char; 
+                input.focus();
+            }
+        };
+    } else {
+        b.className = 'key key-empty';
+        b.disabled = true;
+    }
+    return b;
 }
 
 function genererClavier(type = 'hira') { 
@@ -614,13 +729,17 @@ document.addEventListener('keydown', (e) => {
 
 function normaliser(str) {
     if (!str) return "";
-    return str
+    let result = str
         .toLowerCase()
         .trim()
-        .normalize("NFD") // Sépare les accents des lettres
-        .replace(/[\u0300-\u036f]/g, "") // Supprime les accents (ex: é -> e)
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Supprime la ponctuation
-        .replace(/\s+/g, ""); // Supprime TOUS les espaces
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Ta regex actuelle
+        .replace(/\s+/g, "");
+    
+    // Log pour voir si "〜えん" devient bien "えん" ou s'il garde la vague
+    console.log(`[NORM] "${str}" est devenu -> "${result}"`);
+    return result;
 }
 
 function modifierTousChapitres(etat) {
@@ -837,12 +956,23 @@ document.getElementById('drill-input').addEventListener('keydown', function(e) {
         const m = drillState.mot;
         const possibleAnswers = [...m.jp_kana, ...m.jp_kanji, ...m.jp_romaji].map(a => normaliser(a));
 
-        if (possibleAnswers.includes(val)) {
+        // --- BLOC DE LOGS POUR DEBUG ---
+        console.log("🎯 DEBUG DRILL");
+        console.log("Mot en cours :", m.fr[0]);
+        console.log("Saisie brute :", this.value);
+        console.log("Saisie normalisée (val) :", `"${val}"`);
+        console.log("Réponses possibles (normalisées) :", possibleAnswers);
+        
+        const matchTrouve = possibleAnswers.includes(val);
+        console.log("Match trouvé ? :", matchTrouve ? "✅ OUI" : "❌ NON");
+
+        // -------------------------------
+
+        if (matchTrouve) {
             drillState.currentSuccess++;
             this.value = "";
             this.classList.add('drill-input-success');
             
-            // En mode difficile, on laisse caché pour la répétition suivante
             if (drillState.blindMode) {
                 document.getElementById('drill-aide-jp').style.visibility = "hidden";
             }
@@ -852,7 +982,6 @@ document.getElementById('drill-input').addEventListener('keydown', function(e) {
 
             if (drillState.currentSuccess >= drillState.target) {
                 document.getElementById('drill-feedback-msg').innerText = "✨ Mot validé !";
-                // On réaffiche quand même pour la satisfaction finale
                 document.getElementById('drill-aide-jp').style.visibility = "visible"; 
                 setTimeout(fermerDrill, 1000);
             }
@@ -860,7 +989,6 @@ document.getElementById('drill-input').addEventListener('keydown', function(e) {
             drillState.currentSuccess = 0;
             this.classList.add('drill-input-error');
             
-            // ERREUR : On réaffiche l'aide pour que l'utilisateur puisse mémoriser
             document.getElementById('drill-aide-jp').style.visibility = "visible";
             document.getElementById('drill-feedback-msg').innerText = "❌ Erreur ! On recommence.";
             
@@ -1193,4 +1321,277 @@ async function importerProgressionDonnees(donnees) {
 ❌ ${countEchecs} mots non trouvés dans le dictionnaire actuel.`);
     
     location.reload(); 
+}
+
+// Récupère la liste des noms de chapitres créés par l'utilisateur
+function getChapitresPersonnels() {
+    const saved = localStorage.getItem('nihonjo_custom_chapters');
+    return saved ? JSON.parse(saved) : [];
+}
+
+// Sauvegarde un chapitre uniquement s'il est vraiment "nouveau"
+function sauvegarderChapitreStorage(nom) {
+    if (!nom) return;
+    const cleanNom = nom.trim();
+    
+    // 1. Ne rien faire si c'est le chapitre par défaut
+    if (cleanNom.toLowerCase() === "personnel") return;
+
+    // 2. Vérifier s'il existe déjà dans la configuration statique (config_chapitres.js)
+    const existeDansConfig = Object.values(STRUCTURE_CHAPITRES).some(cat => 
+        cat.items.some(item => item.id === cleanNom)
+    );
+    if (existeDansConfig) return;
+
+    // 3. Vérifier s'il est déjà dans le LocalStorage
+    let chapitresLocaux = getChapitresDepuisStorage();
+    if (!chapitresLocaux.includes(cleanNom)) {
+        chapitresLocaux.push(cleanNom);
+        localStorage.setItem('nihonjo_custom_chapters', JSON.stringify(chapitresLocaux));
+    }
+}
+
+/**
+ * Affiche la liste des chapitres persos avec boutons Modif/Suppr (VERSION DEBUG)
+ */
+function chargerGestionChapitres() {
+    console.group("🛠️ DEBUG : chargerGestionChapitres");
+
+    const container = document.getElementById('body-gestion-chapitres');
+    if (!container) {
+        console.warn("❌ ÉCHEC : Le conteneur 'body-gestion-chapitres' n'existe pas dans le DOM.");
+        console.groupEnd();
+        return;
+    }
+
+    // 1. Que contient le dictionnaire complet actuellement ?
+    const chapitresMots = dictionnaireComplet.flatMap(m => m.chapitres || []);
+    const chapitresUniquesMots = [...new Set(chapitresMots)];
+    console.log("1️⃣ Chapitres extraits des mots :", chapitresUniquesMots);
+
+    // 2. Que contient le LocalStorage ?
+    const chapitresStorage = getChapitresDepuisStorage();
+    console.log("2️⃣ Chapitres dans le LocalStorage :", chapitresStorage);
+
+    // 3. Fusion des deux
+    const tousLesChapitresExistants = [...new Set([...chapitresUniquesMots, ...chapitresStorage])];
+    console.log("3️⃣ TOUS les chapitres fusionnés :", tousLesChapitresExistants);
+
+    // 4. Constitution de la liste "Noire" (Les chapitres système à cacher)
+    const configStructure = typeof STRUCTURE_CHAPITRES !== 'undefined' ? STRUCTURE_CHAPITRES : {};
+    let chapitresSysteme = ["personnel"]; // On masque toujours le chapitre par défaut
+    
+    Object.values(configStructure).forEach(cat => {
+        if (cat.items) {
+            cat.items.forEach(item => chapitresSysteme.push(item.id));
+        }
+    });
+    console.log("4️⃣ Chapitres Système (Liste noire) :", chapitresSysteme);
+
+    // 5. Le Filtrage final (On compare en minuscules par sécurité)
+    const chapitresPerso = tousLesChapitresExistants.filter(nom => {
+        if (!nom) return false;
+        // On vérifie si le chapitre n'est PAS dans la liste système
+        const estDansSysteme = chapitresSysteme.some(sys => sys.toLowerCase() === nom.toLowerCase());
+        return !estDansSysteme;
+    });
+    
+    console.log("5️⃣ RÉSULTAT FINAL : Chapitres à afficher :", chapitresPerso);
+    console.groupEnd();
+
+    // --- MISE À JOUR DE L'INTERFACE ---
+    container.innerHTML = "";
+
+    if (chapitresPerso.length === 0) {
+        container.innerHTML = "<tr><td colspan='2' style='text-align: center; color: #888;'>Aucun chapitre personnalisé créé.</td></tr>";
+        return;
+    }
+
+    chapitresPerso.sort().forEach(nom => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${nom.replace(/_/g, ' ')}</strong></td>
+            <td style="text-align: center;">
+                <button class="btn-small" onclick="modifierNomChapitre('${nom}')" title="Renommer">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn-small btn-danger" onclick="supprimerChapitre('${nom}')" title="Supprimer" style="background-color: #e74c3c; border-color: #e74c3c;">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        `;
+        container.appendChild(tr);
+    });
+}
+
+/**
+ * RENOMMER : Change le nom dans le Storage ET dans tous les mots concernés
+ */
+async function modifierNomChapitre(ancienNom) {
+    const nouveauNom = prompt(`Renommer le chapitre "${ancienNom}" en :`, ancienNom);
+    if (!nouveauNom || nouveauNom.trim() === "" || nouveauNom === ancienNom) return;
+
+    const cleanNom = nouveauNom.trim();
+
+    // 1. Mise à jour du LocalStorage
+    let chapitres = getChapitresDepuisStorage();
+    const index = chapitres.indexOf(ancienNom);
+    if (index !== -1) {
+        chapitres[index] = cleanNom;
+        localStorage.setItem('nihonjo_custom_chapters', JSON.stringify(chapitres));
+    }
+
+    // 2. Mise à jour des mots dans Dexie (IndexedDB)
+    // On trouve tous les mots qui ont ce chapitre et on remplace l'entrée dans l'array
+    await db.motsPerso.where('chapitres').equals(ancienNom).modify(mot => {
+        const i = mot.chapitres.indexOf(ancienNom);
+        if (i !== -1) mot.chapitres[i] = cleanNom;
+    });
+
+    alert("Chapitre renommé avec succès !");
+    refreshTout();
+}
+
+/**
+ * SUPPRIMER : Supprime le chapitre, les mots associés et leur progression
+ */
+async function supprimerChapitre(nom) {
+    const confirmation = confirm(`⚠️ ATTENTION ⚠️\nSupprimer le chapitre "${nom}" supprimera également TOUS les mots à l'intérieur ainsi que leur progression.\nConfirmer ?`);
+    
+    if (!confirmation) return;
+
+    try {
+        // 1. Trouver les mots associés pour récupérer leurs clés de progression (fr)
+        const motsAssocies = await db.motsPerso.where('chapitres').equals(nom).toArray();
+        const clesProgression = motsAssocies.map(m => m.fr[0]);
+
+        // // 2. Supprimer les données de progression
+        // if (clesProgression.length > 0) {
+        //     await db.progression.bulkDelete(clesProgression);
+        // }
+
+        // 3. Supprimer les mots eux-mêmes
+        await db.motsPerso.where('chapitres').equals(nom).delete();
+
+        // 4. Retirer le chapitre du LocalStorage
+        let chapitres = getChapitresDepuisStorage();
+        chapitres = chapitres.filter(c => c !== nom);
+        localStorage.setItem('nihonjo_custom_chapters', JSON.stringify(chapitres));
+
+        alert(`Le chapitre "${nom}" et ses ${motsAssocies.length} mots ont été supprimés.`);
+        refreshTout();
+
+    } catch (e) {
+        console.error("Erreur suppression chapitre:", e);
+        alert("Une erreur est survenue lors de la suppression.");
+    }
+}
+
+/**
+ * Utilitaire pour rafraîchir l'interface globale
+ */
+async function refreshTout() {
+    await chargerDonnees();      // Recharge le dictionnaire global
+    await initialiserInterface(); // Reconstruit les filtres et checkboxes
+    chargerGestionChapitres();   // Actualise le tableau de gestion des chapitres
+    if (typeof chargerListeGestion === 'function') chargerListeGestion(); // Actualise le tableau des mots
+}
+
+function getChapitresDepuisStorage() {
+    const saved = localStorage.getItem('nihonjo_custom_chapters');
+    return saved ? JSON.parse(saved) : [];
+}
+
+// Vérifie si un chapitre est nouveau et l'enregistre si nécessaire
+function filtrerEtSauvegarderChapitre(nom) {
+    if (!nom || nom.trim() === "" || nom.toLowerCase() === "personnel") return;
+    
+    const cleanNom = nom.trim();
+    
+    // SÉCURITÉ : Même protection ici
+    const configStructure = typeof STRUCTURE_CHAPITRES !== 'undefined' ? STRUCTURE_CHAPITRES : {};
+    
+    // Vérifie si le chapitre existe déjà
+    const existeDansConfig = Object.values(configStructure).some(cat => 
+        cat.items && cat.items.some(item => item.id === cleanNom)
+    );
+    
+    if (existeDansConfig) return;
+
+    // Ajoute au LocalStorage si c'est un nouveau chapitre perso
+    let chapitresLocaux = getChapitresDepuisStorage();
+    if (!chapitresLocaux.includes(cleanNom)) {
+        chapitresLocaux.push(cleanNom);
+        localStorage.setItem('nihonjo_custom_chapters', JSON.stringify(chapitresLocaux));
+    }
+}
+
+/**
+ * Crée un chapitre, lui assigne une catégorie et copie les mots sélectionnés.
+ */
+async function creerChapitreAvecImport() {
+    const nomBrut = document.getElementById('new-chap-name').value;
+    const categorie = document.getElementById('new-chap-category').value;
+    const importSelect = document.getElementById('new-chap-import');
+    const selections = Array.from(importSelect.selectedOptions).map(opt => opt.value);
+
+    if (!nomBrut || nomBrut.trim() === "") {
+        return alert("Veuillez saisir un nom pour votre chapitre.");
+    }
+    
+    // Normalisation basique (pas d'espaces)
+    const nomChap = nomBrut.trim().replace(/\s+/g, '_');
+
+    // 1. Sauvegarde de la catégorie choisie
+    let mapping = JSON.parse(localStorage.getItem('nihonjo_chap_categories') || '{}');
+    mapping[nomChap] = categorie;
+    localStorage.setItem('nihonjo_chap_categories', JSON.stringify(mapping));
+
+    // 2. Sauvegarde du chapitre lui-même
+    sauvegarderChapitreStorage(nomChap);
+
+    // 3. Importation / Copie des mots
+    if (selections.length > 0) {
+        // On isole les mots de la base globale qui correspondent aux thèmes ou chapitres choisis
+        const motsACopier = dictionnaireComplet.filter(m => {
+            const matchTheme = m.thematiques && m.thematiques.some(t => selections.includes('theme:' + t));
+            const matchChap = m.chapitres && m.chapitres.some(c => selections.includes('chap:' + c));
+            return matchTheme || matchChap;
+        });
+
+        if (motsACopier.length > 0) {
+            // On crée un clone indépendant de chaque mot pour l'injecter dans le lexique perso
+            const clones = motsACopier.map(m => {
+                return {
+                    fr: [...m.fr],
+                    jp_romaji: [...(m.jp_romaji || [])],
+                    jp_kanji: [...(m.jp_kanji || [])],
+                    jp_kana: [...(m.jp_kana || [])],
+                    context: m.context || "",
+                    thematiques: [...(m.thematiques || [])],
+                    chapitres: [nomChap], // Le clone appartient UNIQUEMENT au nouveau chapitre
+                    statut: "non acquis"
+                };
+            });
+
+            try {
+                await db.motsPerso.bulkAdd(clones);
+                alert(`Succès ! Le chapitre "${nomChap}" a été créé dans "${categorie}" et ${clones.length} mots y ont été copiés.`);
+            } catch (err) {
+                console.error("Erreur lors de la copie :", err);
+                alert("Une erreur est survenue lors de la copie des mots.");
+            }
+        } else {
+            alert(`Le chapitre "${nomChap}" a été créé, mais aucun mot correspondant n'a été trouvé.`);
+        }
+    } else {
+        alert(`Le chapitre "${nomChap}" a été créé vide dans la catégorie "${categorie}".`);
+    }
+
+    // Réinitialisation de l'interface
+    document.getElementById('new-chap-name').value = "";
+    importSelect.selectedIndex = -1;
+    
+    // On relance la mécanique globale
+    refreshTout();
 }

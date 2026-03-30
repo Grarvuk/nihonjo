@@ -214,8 +214,14 @@
             <div class="form-grid">
                 <input type="text" id="add-fr" placeholder="Français (ex: Eau && Flotte)">
                 <input type="text" id="add-romaji" placeholder="Romaji (ex: ocha && cha)">
-                <input type="text" id="add-kanji" placeholder="Kanji (ex: お茶 && 茶)">
-                <input type="text" id="add-kana" placeholder="Kana (ex: おちゃ && ちゃ)">
+                <div class="input-wrapper" style="display: flex; gap: 5px;">
+                    <input type="text" id="add-kanji" placeholder="Kanji (ex: お茶 && 茶)" style="flex: 1;">
+                    <button type="button" class="btn-secondary" onclick="afficherClavierAjout('add-kanji')" style="padding: 0 10px;">⌨️</button>
+                </div>
+                <div class="input-wrapper" style="display: flex; gap: 5px;">
+                    <input type="text" id="add-kana" placeholder="Kana (ex: おちゃ && ちゃ)" style="flex: 1;">
+                    <button type="button" class="btn-secondary" onclick="afficherClavierAjout('add-kana')" style="padding: 0 10px;">⌨️</button>
+                </div>
                 <input type="text" id="add-context" placeholder="Contexte (ex: Boisson) - Valeur unique">
                 <div class="select-wrapper">
                     <label for="add-thematique" style="font-size: 0.8rem; color: #666;">Thématique (choisir ou taper) :</label>
@@ -229,6 +235,53 @@
                 <button class="btn-primary" id="btn-ajouter-mot">Ajouter à la session</button>
             </div>
             <button class="btn-quit" onclick="toggleAjout()">Fermer</button>
+        </div>
+
+        <div class="card card-wide" style="margin-top: 20px; border-left: 4px solid #f39c12;">
+            <h3><i class="fa-solid fa-folder-plus"></i> Créer un nouveau Chapitre</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">
+                Permet de créer un chapitre et d'y copier automatiquement tous les mots issus d'autres thématiques ou chapitres.
+            </p>
+            
+            <div class="form-grid">
+                <input type="text" id="new-chap-name" placeholder="Nom du chapitre (ex: animaux_sauvages)">
+                
+                <div class="select-wrapper">
+                    <label style="font-size: 0.8rem; color: #666;">Catégorie cible :</label>
+                    <select id="new-chap-category">
+                        <option value="Personnel">Personnel</option>
+                        <option value="Vocabulaire">Vocabulaire</option>
+                        <option value="Temps & Nombres">Temps & Nombres</option>
+                        <option value="Kanjis">Kanjis</option>
+                    </select>
+                </div>
+                
+                <div class="select-wrapper" style="grid-column: span 2;">
+                    <label style="font-size: 0.8rem; color: #666;">Peupler avec (Maintenez Ctrl / Cmd pour plusieurs choix) :</label>
+                    <select id="new-chap-import" multiple style="height: 120px; font-family: sans-serif;">
+                        </select>
+                </div>
+            </div>
+            
+            <div class="btn-group" style="margin-top: 15px;">
+                <button class="btn-primary" onclick="creerChapitreAvecImport()" style="background-color: #f39c12;">
+                    Créer et Peupler
+                </button>
+            </div>
+        </div>
+
+        <div class="card card-wide" style="margin-top: 2rem;">
+            <h3><i class="fa-solid fa-folder-tree"></i> Gestion des Chapitres Personnels</h3>
+            <table id="table-gestion-chapitres">
+                <thead>
+                    <tr>
+                        <th>Nom du Chapitre</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="body-gestion-chapitres">
+                </tbody>
+            </table>
         </div>
 
         <div class="card card-wide" style="margin-top: 20px;">

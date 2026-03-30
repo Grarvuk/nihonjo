@@ -95,7 +95,6 @@ button {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* 5 colonnes : A I U E O */
     gap: 5px;
-    max-height: 300px;
     overflow-y: auto;
 }
 
