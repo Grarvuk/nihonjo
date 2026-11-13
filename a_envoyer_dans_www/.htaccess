@@ -1,0 +1,77 @@
+# =============================================================================
+#  .htaccess — RACINE DU SERVEUR (le dossier qui contient vos projets)
+# =============================================================================
+#
+#  A deposer a la racine, puis a RENOMMER en « .htaccess » (avec le point).
+#
+#  Ne pas confondre avec le .htaccess de odyvresse_front/, qui gere la
+#  reecriture Angular. Les deux coexistent et ont des roles differents :
+#  celui-ci protege le dossier PARENT, l'autre fait fonctionner le jeu.
+#
+#  Contexte : le 20/08/2026, un visiteur arrivant par un moteur de recherche
+#  est tombe sur la liste des dossiers du serveur, les trois projets visibles.
+#  Apache affiche ce listage des qu'un dossier n'a pas de fichier d'index.
+# =============================================================================
+
+
+# --- 1. Interdire le listage de repertoire -----------------------------------
+#
+# LA ligne qui corrige le probleme. Sans elle, tout dossier depourvu d'index
+# expose son contenu : noms de projets, de fichiers, sauvegardes oubliees.
+# Apache repond desormais 403 au lieu d'afficher l'arborescence.
+Options -Indexes
+
+
+# --- 2. Fichier servi par defaut ---------------------------------------------
+#
+# Explicite plutot que laisse au defaut du serveur : c'est l'absence d'index
+# trouve qui declenche le listage.
+DirectoryIndex index.html index.htm
+
+
+# --- 3. Tout renvoyer vers le jeu --------------------------------------------
+#
+# /!\ ADAPTER LE NOM DU DOSSIER ci-dessous s'il differe.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Seulement pour le domaine d'Odyvresse (celui dont le dossier racine est
+  # www/). Les sites qui ont LEUR dossier (www/nihonjo, www/cv) heritent de
+  # ce .htaccess tant qu'ils n'ont pas de regles a eux : sans cette
+  # condition, leurs requetes partaient aussi vers /odyvresse_front/ et tout
+  # repondait 404 (vu le 26/10/2026 sur nihonjo.odyvresse.com).
+  RewriteCond %{HTTP_HOST} ^(www\.)?odyvresse\.com$ [NC]
+
+  # Deja dans le dossier du jeu : ne rien faire, sinon la regle se rappellerait
+  # elle-meme indefiniment (erreur 500 « Request exceeded the limit of
+  # internal redirects »).
+  RewriteCond %{REQUEST_URI} !^/odyvresse_front
+  RewriteRule ^(.*)$ /odyvresse_front/$1 [L]
+</IfModule>
+
+
+# --- 4. Fichiers a ne jamais servir ------------------------------------------
+#
+# Ceinture et bretelles apres une exposition d'arborescence : meme si le
+# listage est ferme, une URL devinee reste possible. Ces extensions n'ont
+# aucune raison d'etre telechargeables.
+<FilesMatch "\.(sql|pgc|env|log|bak|old|zip|7z|tar|gz|ini|yml|yaml|json~)$">
+  Require all denied
+</FilesMatch>
+
+# Fichiers caches (.env, .git, .htpasswd...). Le .htaccess lui-meme est deja
+# protege par Apache, mais pas ses voisins.
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+
+# --- 5. Ne pas indexer ce qui n'est pas le jeu --------------------------------
+#
+# Complementaire, pas suffisant : un en-tete ne protege rien, il demande
+# seulement aux moteurs d'oublier la page. La protection, ce sont les
+# sections 1 et 4.
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>

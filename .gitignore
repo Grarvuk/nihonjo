@@ -1,0 +1,24 @@
+# La base SQLite contient les données vivantes : jamais dans git.
+data/*.sqlite
+data/*.sqlite-journal
+# Réglages propres à une machine (voir api/config.php).
+api/config.local.php
+# Empreinte du mot de passe de l'hébergement.
+.htpasswd
+# Clé des sessions (comptes Discord) et cache des certificats Google : propres
+# à chaque serveur, créés au premier besoin.
+data/*.key
+data/certificats_firebase.json
+# Secrets locaux lus par Docker (secret de l'application Discord).
+.env
+# Application Android (creer_application_android.bat, Capacitor) : se gardent
+# package.json, package-lock.json, capacitor.config.json et res/ ; le reste se
+# refait à chaque construction (www/ : copie du front ; android/ : projet créé
+# par « capacitor add android »).
+application_android/node_modules/
+application_android/www/
+application_android/android/
+sortie_android/
+# Version de production (construire_version_prod.bat) : se refait à chaque fois.
+version_prod/
+nihonjo_prod_*.zip

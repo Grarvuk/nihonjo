@@ -1,0 +1,6 @@
+# Les fichiers JS et CSS changent à chaque livraison : le navigateur
+# revalide (réponse 304 si rien n'a changé) au lieu de servir une ancienne
+# version depuis son cache, ce qui mélangerait des modules de deux versions.
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+</IfModule>

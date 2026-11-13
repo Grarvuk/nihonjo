@@ -1,0 +1,10 @@
+# Le lien entre le site et l'application Android (assetlinks.json, écrit par
+# creer_application_android.bat) doit être lisible SANS le mot de passe
+# Basic du .htaccess racine : Android et Google le lisent pour vérifier que
+# l'application et le site vont ensemble. Rien d'autre n'est dans ce dossier.
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+<IfModule mod_mime.c>
+    AddType application/json .json
+</IfModule>

@@ -1,0 +1,9 @@
+# La base SQLite (nihonjo.sqlite) et son journal vivent ici.
+# ⚠️ Sans ce fichier, la base entière se télécharge par une simple URL.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

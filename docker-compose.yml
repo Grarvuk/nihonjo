@@ -4,4 +4,36 @@ services:
     container_name: nihonjo_web
     ports:
       - "8080:80" # L'app sera accessible sur http://localhost:8080
+    volumes:
+      # La base SQLite est le fichier data\nihonjo.sqlite DU POSTE (dossier
+      # partagé avec le conteneur, 25/10) : DB Browser for SQLite ouvre la
+      # base vivante, pas une copie. Elle survit à « up --build » et à
+      # « down -v ». (Jusqu'au 25/10 : volume nommé « nihonjo_donnees », que
+      # lancer_nihonjo.bat recopie ici au premier lancement ; il reste en
+      # secours, rien ne l'efface.)
+      - ./data:/var/www/html/data
+      # Le CODE aussi est lu directement dans ce dossier (25/10) : une
+      # modification se voit au rechargement de la page, sans reconstruire
+      # l'image. Vécu le 25/10 : le code copié dans l'image restait l'ancien
+      # (accueil sans « Mots à réviser ») alors que les fichiers étaient à
+      # jour. Dossier par dossier, PAS la racine : le .htaccess racine (mot de
+      # passe d'OVH) n'entre pas dans le conteneur.
+      - ./index.html:/var/www/html/index.html:ro
+      - ./manifest.webmanifest:/var/www/html/manifest.webmanifest:ro
+      - ./assets:/var/www/html/assets:ro
+      - ./api:/var/www/html/api:ro
+      - ./tests:/var/www/html/tests:ro
+    # Connexion Google (Firebase) comme en ligne : « localhost » est autorisé
+    # d'office dans Firebase. Le mot de passe du .htaccess, lui, n'existe pas
+    # en local (.dockerignore).
+    environment:
+      # Connexion Discord : le secret de l'application Discord, lu dans le
+      # fichier .env à côté de ce fichier (ligne
+      # NIHONJO_DISCORD_CLIENT_SECRET=…, .env est hors git). Vide : pas de
+      # bouton Discord, Google seul. Voir doc_pour_agents/deploiement.md.
+      NIHONJO_DISCORD_CLIENT_SECRET: ${NIHONJO_DISCORD_CLIENT_SECRET:-}
+      NIHONJO_DISCORD_CLIENT_ID: ${NIHONJO_DISCORD_CLIENT_ID:-}
+      # Poste SANS connexion (pas de réseau, un seul compte) : décommenter la
+      # ligne suivante et relancer.
+      # NIHONJO_AUTH: aucune
     restart: always

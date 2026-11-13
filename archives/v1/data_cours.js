@@ -1178,7 +1178,7 @@ const dictionnaire_cours = [
     "jp_romaji": ["etto"],
     "jp_kanji": [""],
     "jp_kana": ["えっ"],
-    "context": "Interjection de surprise",
+    "context": "Interjection de surprise, étto phonotiquement",
     "thematiques": ["expression"],
     "chapitres": ["vocabulaire_p_65"],
     "statut": "non acquis"

@@ -1,0 +1,12 @@
+{
+  "name": "nihonjo-application-android",
+  "private": true,
+  "description": "L'application Android de Nihonjo (Capacitor, comme odyvresse_app) : creer_application_android.bat. Versions alignées sur odyvresse_app.",
+  "dependencies": {
+    "@capacitor-community/admob": "8.2.1",
+    "@capacitor/android": "8.4.0",
+    "@capacitor/cli": "8.4.0",
+    "@capacitor/core": "8.4.0",
+    "@capgo/capacitor-social-login": "8.5.0"
+  }
+}

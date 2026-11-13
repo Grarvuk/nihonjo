@@ -1,0 +1,14 @@
+{
+  "name": "nihonjo",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.4.1",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  }
+}

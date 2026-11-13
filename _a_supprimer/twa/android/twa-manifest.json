@@ -1,0 +1,40 @@
+{
+  "packageId": "com.odyvresse.nihonjo",
+  "host": "nihonjo.odyvresse.com",
+  "name": "Nihonjo — vocabulaire japonais",
+  "launcherName": "Nihonjo",
+  "display": "standalone",
+  "themeColor": "#19233D",
+  "themeColorDark": "#151A29",
+  "navigationColor": "#19233D",
+  "navigationColorDark": "#151A29",
+  "navigationDividerColor": "#19233D",
+  "navigationDividerColorDark": "#151A29",
+  "backgroundColor": "#F7F7F2",
+  "enableNotifications": false,
+  "startUrl": "/#/reviser",
+  "iconUrl": "http://127.0.0.1:8799/nihonjo-512.png",
+  "maskableIconUrl": "http://127.0.0.1:8799/nihonjo-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./nihonjo-signature.keystore",
+    "alias": "nihonjo"
+  },
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "minSdkVersion": 21,
+  "orientation": "default",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "displayOverride": []
+}

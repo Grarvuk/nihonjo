@@ -1,0 +1,19 @@
+.git
+.htpasswd
+# Le .htaccess RACINE (réglé pour OVH : redirection de www.nihonjo…, mot de
+# passe en option) reste hors de l'image : en local, rien de cela (souhait
+# de José, 23/10 : pas de mot de passe). L'image php:apache LIT
+# les .htaccess (AllowOverride All) : ceux de data/, api/ et assets/ y restent.
+/.htaccess
+data/*.sqlite
+data/*.sqlite-journal
+data/*.key
+data/certificats_firebase.json
+.env
+api/config.local.php
+carnet_agent
+tickets
+application_android
+sortie_android
+version_prod
+nihonjo_prod_*.zip

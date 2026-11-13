@@ -2,343 +2,44 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Nihonjo</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Révisions de vocabulaire japonais.">
+    <meta name="theme-color" content="#F7F7F2" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#151A29" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='6' fill='%23ffffff' stroke='%232A4B8D' stroke-width='4'/%3E%3Cpath d='M32 8v48M8 32h48' stroke='%239FC4B0' stroke-width='2' stroke-dasharray='4 4'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='%231C2433' font-family='serif'%3E%E6%97%A5%3C/text%3E%3C/svg%3E">
+    <!-- Site installable sur l'écran d'accueil (l'application Android, elle, est faite par creer_application_android.bat).
+         use-credentials : en ligne, le site est derrière un mot de passe Basic, que la requête du manifeste doit porter. -->
+    <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
+    <link rel="apple-touch-icon" href="assets/icones/nihonjo-apple-180.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="assets/css/nihonjo.css">
 </head>
 <body>
-
-    <header>
-        <h1>Nihonjo : Révisions Japonais</h1>
+    <a class="evitement" href="#vue">Aller au contenu</a>
+    <header class="entete">
+        <a class="marque" href="#/reviser" aria-label="Nihonjo, accueil">
+            <span class="marque-cases" lang="ja" aria-hidden="true"><span>日</span><span>本</span><span>語</span></span>
+            <span class="marque-nom">Nihonjo</span>
+        </a>
+        <nav class="navigation" aria-label="Sections">
+            <a href="#/reviser" data-onglet="reviser" data-icone="reviser"><span>Réviser</span></a>
+            <a href="#/kana" data-onglet="kana" data-icone="kana"><span>Kana</span></a>
+            <a href="#/kanji" data-onglet="kanji" data-icone="kanji"><span>Kanji</span></a>
+            <a href="#/lexique" data-onglet="lexique" data-icone="liste"><span>Lexique</span></a>
+            <a href="#/chapitres" data-onglet="chapitres" data-icone="dossier"><span>Chapitres</span></a>
+        </nav>
+        <button type="button" class="bouton-icone bascule-theme" data-bascule-theme></button>
+        <div class="zone-compte" data-compte></div>
     </header>
 
-<main>
-        <section id="menu">
-            <div class="card card-wide">
-                <h3>Paramètres de session</h3>
-                
-                <label for="select-thematique">Thématique :</label>
-                <select id="select-thematique">
-                    <option value="tous">Toutes</option>
-                </select>
-
-                <label for="filter-etat">État d'apprentissage :</label>
-                <select id="filter-etat">
-                    <option value="tous">Tous les états</option>
-                    <option value="acquis">Acquis</option>
-                    <option value="a revoir">À revoir</option>
-                    <option value="non acquis">Non acquis</option>
-                </select>
-
-                <div class="select-wrapper">
-                    <label for="session-limit">Nombre de mots (0 ou vide = tous) :</label>
-                    <input type="number" id="session-limit" min="0" placeholder="Tous" style="margin-top: 5px;">
-                </div>
-
-                <div id="chapitres-container">
-                    <div class="bulk-actions" style="margin-bottom: 10px;">
-                        <button type="button" class="btn-small" onclick="modifierTousChapitres(true)">Tout cocher</button>
-                        <button type="button" class="btn-small" onclick="modifierTousChapitres(false)">Tout décocher</button>
-                    </div>
-                    <p><strong>Chapitres à inclure :</strong></p>
-                    <div id="checkboxes-chapitres"></div>
-                </div>
-
-                <div class="actions">
-                    <button class="btn-primary" style="background-color: #4a90e2; width: 100%; margin-bottom: 15px;" onclick="demarrerCours()">
-                        <i class="fa-solid fa-book-open"></i> Consulter le cours (Liste)
-                    </button>
-
-                    <button class="btn-primary bouton-exo" onclick="demarrer('fr-jp')">
-                        <i class="fa-solid fa-language"></i> Traduire du Français → Japonais
-                    </button>
-                    <button class="btn-primary bouton-exo" onclick="demarrer('jp-fr')">
-                        <i class="fa-solid fa-language"></i> Japonais → Français
-                    </button>
-
-                    <button class="btn-secondary bouton-exo" onclick="demarrer('trous-kana')">
-                        <i class="fa-solid fa-keyboard"></i> Mots à trous (Kana)
-                    </button>
-                    <button class="btn-secondary bouton-exo" onclick="demarrer('trous-kanji')">
-                        <i class="fa-solid fa-keyboard"></i> Mots à trous (Kanji)
-                    </button>
-
-                    <button class="btn-special bouton-exo" onclick="demarrer('lecture-kanji')">
-                        <i class="fa-solid fa-eye"></i> Kanjis → Français
-                    </button>
-                    <button class="btn-special bouton-exo" onclick="demarrer('transcription')">
-                        <i class="fa-solid fa-eye"></i> Kanjis → Hiragana/Katakana
-                    </button>
-                </div>
-                <br>
-                <button onclick="toggleAjout()" class="btn-toggle-admin">+ Gérer le lexique</button>
-            </div>
-            <div class="card-wide" style="margin-top: 25px; padding: 15px; border: 1px dashed #4a90e2; border-radius: 12px; background: rgba(74, 144, 226, 0.05);">
-                <h3 style="color: #4a90e2; margin-bottom: 10px; font-size: 1.1rem;">
-                    <i class="fa-solid fa-sync"></i> Synchronisation des Acquis
-                </h3>
-                <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">
-                    Sauvegardez ou restaurez uniquement vos états d'apprentissage (Acquis / À revoir).
-                </p>
-                <div class="btn-group" style="display: flex; gap: 10px;">
-                    <button class="btn-primary" onclick="exporterProgressionGlobale()" style="flex: 1; background-color: #2ecc71;">
-                        <i class="fa-solid fa-download"></i> Exporter
-                    </button>
-                    <button class="btn-secondary" onclick="document.getElementById('import-progression-file').click()" style="flex: 1;">
-                        <i class="fa-solid fa-upload"></i> Importer
-                    </button>
-                    <input type="file" id="import-progression-file" class="hidden" accept=".json" onchange="gererImportProgression(event)">
-                </div>
-            </div>
-
-        </section>
-
-<section id="section-cours" class="hidden">
-    <div class="top-nav centrer" style="max-width: 800px; width: 95vw; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <button class="btn-secondary btn-small" onclick="retourMenu()">
-            <i class="fa-solid fa-house"></i> Menu
-        </button>
-
-        <button id="btn-drill-selection" class="btn-primary btn-small" onclick="preparerDrillSelection()" style="background-color: #f39c12; display: none;">
-            <i class="fa-solid fa-layer-group"></i> S'entraîner sur la sélection (<span id="selected-count">0</span>)
-        </button>
-
-        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 5px 10px; border-radius: 8px; border: 1px solid #ddd;">
-            <label for="drill-blind-mode" style="font-size: 0.8rem; font-weight: bold;">Mode Difficile :</label>
-            <input type="checkbox" id="drill-blind-mode" style="width: auto; margin: 0; cursor: pointer;">
-            
-            <div class="tooltip">
-                <i class="fa-solid fa-circle-info" style="color: #4a90e2; cursor: help; font-size: 0.9rem;"></i>
-                <span class="tooltiptext">L'aide japonaise disparaît dès la première lettre tapée et ne revient qu'en cas d'erreur.</span>
-            </div>
-        </div>
-        
-        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 5px 10px; border-radius: 8px; border: 1px solid #ddd;">
-            <label for="drill-reps" style="font-size: 0.8rem; font-weight: bold;">Répétitions :</label>
-            <input type="number" id="drill-reps" value="3" min="1" max="10" style="width: 45px; margin: 0; padding: 2px 5px; font-size: 0.9rem; border: 1px solid #ccc;">
-        </div>
-    </div>
-
-    <div class="card card-wide"> 
-        <h2 id="titre-cours">Révision du lexique</h2>
-        <div id="liste-mots-cours"></div>
-    </div>
-    
-</section>
-        <section id="section-ecriture" class="hidden">
-            <div class="top-nav centrer">
-                <button class="btn-secondary btn-small" onclick="fermerDrill()"><i class="fa-solid fa-arrow-left"></i> Annuler</button>
-            </div>
-            <div class="card card-wide">
-                <p class="statut-badge">Mode Répétition</p>
-                <h3 id="drill-mot-fr" style="color: #4a90e2;">---</h3>
-                <p id="drill-aide-jp" style="font-size: 1.2rem; margin-bottom: 20px;">---</p>
-                
-                <div class="drill-progress-container">
-                    <div id="drill-dots" class="dots-grid"></div>
-                    <p id="drill-counter-text">0 / 3</p>
-                </div>
-
-                <input type="text" id="drill-input" placeholder="Écrivez le mot..." autocomplete="off">
-                
-                <p id="drill-feedback-msg" style="font-weight: bold; min-height: 1.5rem;"></p>
-            </div>
-        </section>
-
-        <section id="exercice" class="hidden">
-            <div class="top-nav centrer">
-                <button class="btn-secondary btn-small" onclick="retourMenu()">
-                    <i class="fa-solid fa-house"></i> Menu
-                </button>
-            </div>
-
-            <div class="card card-wide">
-                <p id="info-progress" class="statut-badge"></p>
-                <div class="score-container">
-                    Score : <span id="current-score">0</span> / <span id="total-questions">0</span>
-                </div>
-                <div id="word-status-badge" class="status-badge-small"></div>
-                <p id="consigne-exercice" class="consigne-box"></p>
-                <h2 id="mot-a-deviner">---</h2>
-                <p id="contexte-aide"></p>
-                
-                <div class="exercice-interaction-zone">
-                    <div class="input-section">
-                        <div class="input-wrapper">
-                            <input type="text" id="reponse-utilisateur" placeholder="Votre réponse..." autocomplete="off">
-                            <button type="button" id="btn-clavier" onclick="toggleClavier()">⌨️</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn-primary" onclick="verifierReponse()">Valider</button>
-                    <button class="btn-secondary" onclick="passerMot()">Passer</button>
-                </div>
-                
-                <div id="feedback" class="hidden">
-                    <hr>
-                    <p id="resultat-texte"></p>
-                    <div id="correction-details"></div>
-                    <button class="btn-next" onclick="prochainMot()">Suivant</button>
-                </div>
-                <div id="kanji-propositions" class="hidden"></div>
-
-                <div id="keyboard-container" class="hidden">
-                    <div class="keyboard-tabs">
-                        <button type="button" onclick="genererClavier('hira')">Hiragana</button>
-                        <button type="button" onclick="genererClavier('kata')">Katakana</button>
-                    </div>
-                    <div id="keyboard-grid"></div>
-                    <hr>
-                    <div id="keyboard-accents"></div> 
-                </div>
-            </div>
-
-        </section>
-
-    <section id="section-ajout" class="hidden">
-        <br>
-        <div class="centrer" style="">
-            <button class="btn-secondary btn-small" onclick="toggleAjout()">
-                <i class="fa-solid fa-arrow-left"></i> Fermer gestion lexique
-            </button>
-        </div>
-        <br>
-        <div class="card card-wide">
-            <h3>Ajouter un nouveau mot</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">
-                <i class="fa-solid fa-code"></i> Utilisez <b>&&</b> pour séparer plusieurs valeurs (ex: Thé <b>&&</b> Thé vert)
-            </p>
-            <div class="form-grid">
-                <input type="text" id="add-fr" placeholder="Français (ex: Eau && Flotte)">
-                <input type="text" id="add-romaji" placeholder="Romaji (ex: ocha && cha)">
-                <div class="input-wrapper" style="display: flex; gap: 5px;">
-                    <input type="text" id="add-kanji" placeholder="Kanji (ex: お茶 && 茶)" style="flex: 1;">
-                    <button type="button" class="btn-secondary" onclick="afficherClavierAjout('add-kanji')" style="padding: 0 10px;">⌨️</button>
-                </div>
-                <div class="input-wrapper" style="display: flex; gap: 5px;">
-                    <input type="text" id="add-kana" placeholder="Kana (ex: おちゃ && ちゃ)" style="flex: 1;">
-                    <button type="button" class="btn-secondary" onclick="afficherClavierAjout('add-kana')" style="padding: 0 10px;">⌨️</button>
-                </div>
-                <input type="text" id="add-context" placeholder="Contexte (ex: Boisson) - Valeur unique">
-                <div class="select-wrapper">
-                    <label for="add-thematique" style="font-size: 0.8rem; color: #666;">Thématique (choisir ou taper) :</label>
-                    <input type="text" id="add-thematique" list="liste-thematiques-existantes" placeholder="Ex: Pokémon && Cuisine...">
-                    <datalist id="liste-thematiques-existantes"></datalist>
-                </div>
-                <input type="text" id="add-chapitre" value="personnel" placeholder="Chapitre (ex: chapitre_1) - Valeur unique">
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn-primary" id="btn-ajouter-mot">Ajouter à la session</button>
-            </div>
-            <button class="btn-quit" onclick="toggleAjout()">Fermer</button>
-        </div>
-
-        <div class="card card-wide" style="margin-top: 20px; border-left: 4px solid #f39c12;">
-            <h3><i class="fa-solid fa-folder-plus"></i> Créer un nouveau Chapitre</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">
-                Permet de créer un chapitre et d'y copier automatiquement tous les mots issus d'autres thématiques ou chapitres.
-            </p>
-            
-            <div class="form-grid">
-                <input type="text" id="new-chap-name" placeholder="Nom du chapitre (ex: animaux_sauvages)">
-                
-                <div class="select-wrapper">
-                    <label style="font-size: 0.8rem; color: #666;">Catégorie cible :</label>
-                    <select id="new-chap-category">
-                        <option value="Personnel">Personnel</option>
-                        <option value="Vocabulaire">Vocabulaire</option>
-                        <option value="Temps & Nombres">Temps & Nombres</option>
-                        <option value="Kanjis">Kanjis</option>
-                    </select>
-                </div>
-                
-                <div class="select-wrapper" style="grid-column: span 2;">
-                    <label style="font-size: 0.8rem; color: #666;">Peupler avec (Maintenez Ctrl / Cmd pour plusieurs choix) :</label>
-                    <select id="new-chap-import" multiple style="height: 120px; font-family: sans-serif;">
-                        </select>
-                </div>
-            </div>
-            
-            <div class="btn-group" style="margin-top: 15px;">
-                <button class="btn-primary" onclick="creerChapitreAvecImport()" style="background-color: #f39c12;">
-                    Créer et Peupler
-                </button>
-            </div>
-        </div>
-
-        <div class="card card-wide" style="margin-top: 2rem;">
-            <h3><i class="fa-solid fa-folder-tree"></i> Gestion des Chapitres Personnels</h3>
-            <table id="table-gestion-chapitres">
-                <thead>
-                    <tr>
-                        <th>Nom du Chapitre</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="body-gestion-chapitres">
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card card-wide" style="margin-top: 20px;">
-            <div class="btn-group" style="margin-top: 20px; gap: 10px;">
-                <button class="btn-primary btn-small" onclick="exporterMotsPerso()">
-                    <i class="fa-solid fa-download"></i> Exporter mots JSON
-                </button>
-                
-                <button class="btn-primary btn-small" onclick="document.getElementById('import-file').click()">
-                    <i class="fa-solid fa-upload"></i> Importer mots JSON
-                </button>
-                <input type="file" id="import-file" class="hidden" accept=".json" onchange="gererImport(event)">
-            </div>
-            <h3>Lexique Personnel</h3>
-            <div id="liste-gestion-lexique">
-            </div>
-        </div>
-
-        <div id="import-confirm-modal" class="hidden">
-            <div class="card modal-content">
-                <h3>Type d'importation</h3>
-                <p>Comment souhaitez-vous intégrer ces nouveaux mots ?</p>
-                <div class="btn-group" style="flex-direction: column; gap: 10px;">
-                    <button class="btn-primary" id="btn-import-increment">
-                        <i class="fa-solid fa-plus"></i> Incrémenter (Ajouter aux mots existants)
-                    </button>
-                    <button class="btn-special" id="btn-import-overwrite" style="background-color: #e67e22;">
-                        <i class="fa-solid fa-eraser"></i> Écraser (Supprimer tout le lexique perso actuel)
-                    </button>
-                    <button class="btn-secondary" onclick="fermerModalImport()">Annuler</button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <main id="vue" class="vue" tabindex="-1">
+        <p class="chargement">Chargement du vocabulaire…</p>
     </main>
-    <button class="btn-secondary btn-small" onclick="retourMenu()">
-        <i class="fa-solid fa-house"></i> Menu
-    </button>
 
-    <div id="export-modal" class="hidden">
-        <div class="card card-wide modal-content">
-            <h3>Code à copier</h3>
-            <p>Copier-collez dans le fichier <strong>data_perso.js</strong> :</p>
-            <textarea id="json-output" readonly onclick="this.select()"></textarea>
-            <div class="btn-group">
-                <button class="btn-primary" onclick="copierPressePapier()">Copier le code</button>
-                <button class="btn-secondary" onclick="document.getElementById('export-modal').classList.add('hidden')">Fermer</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
-    <script src="config.js"></script>
-    <script src="data_cours.js"></script>
-    <script src="config_chapitres.js"></script>
-    <script src="script.js"></script>
-    <script src="liste_kanjis.js"></script>
-    
+    <noscript><p class="panne">Nihonjo a besoin de JavaScript.</p></noscript>
+    <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>

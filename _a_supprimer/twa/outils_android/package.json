@@ -1,0 +1,9 @@
+{
+  "name": "nihonjo-android",
+  "private": true,
+  "description": "Outils de creer_application_android.bat : Bubblewrap (Google) fabrique l'application Android (TWA) qui ouvre le site Nihonjo en plein écran.",
+  "type": "module",
+  "dependencies": {
+    "@bubblewrap/cli": "1.27.0"
+  }
+}

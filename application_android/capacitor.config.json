@@ -1,0 +1,9 @@
+{
+  "appId": "com.odyvresse.nihonjo",
+  "appName": "Nihonjo",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "odyvresse.com"
+  }
+}

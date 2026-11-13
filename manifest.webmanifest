@@ -1,0 +1,17 @@
+{
+  "name": "Nihonjo — vocabulaire japonais",
+  "short_name": "Nihonjo",
+  "description": "Révisions de vocabulaire japonais.",
+  "lang": "fr",
+  "start_url": "./#/reviser",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F7F2",
+  "theme_color": "#19233D",
+  "icons": [
+    { "src": "assets/icones/nihonjo-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icones/nihonjo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icones/nihonjo-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,27 @@
+# Les réglages (chemin de la base, éventuels secrets locaux) ne se lisent pas par URL.
+<FilesMatch "^config(\.local)?\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# L'application Android (Capacitor, application_android/) appelle l'API depuis
+# SON origine (« https://odyvresse.com », la même que celle de l'application
+# Odyvresse) : elle ne connaît pas le mot de passe Basic du .htaccess racine,
+# et la vérification préalable CORS (OPTIONS) ne le porterait de toute façon
+# jamais. On lève donc le mot de passe pour ces appels-là, et pour index.php
+# seul : l'API se protège elle-même (jeton Google vérifié à chaque requête,
+# api/lib/Authentification.php). ⚠️ L'en-tête Origin se fabrique : cette
+# règle ne vaut pas plus qu'une API sans mot de passe — c'est le jeton qui
+# protège. Garder l'origine alignée sur api/config.php (origines_application)
+# et sur server.hostname de application_android/capacitor.config.json.
+# Sans .htaccess racine (Docker en local), cette règle ne change rien.
+<IfModule mod_authz_core.c>
+    <If "%{HTTP:Origin} == 'https://odyvresse.com' && %{REQUEST_URI} =~ m#/api/index\.php$#">
+        Require all granted
+    </If>
+</IfModule>

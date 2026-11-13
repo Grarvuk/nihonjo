@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs'),p=require('path');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();for(const f of ['contexte.md','carnet_agent/LISEZ-MOI.md']){try{console.log('===== '+f+' =====');console.log(fs.readFileSync(p.join(r,f),'utf8'));}catch(e){console.log('(illisible : '+e.message+')');}}\""
+          }
+        ]
+      }
+    ]
+  }
+}

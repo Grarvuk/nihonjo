@@ -1,0 +1,91 @@
+# =============================================================================
+#  .htaccess — RACINE DE NIHONJO (/home/odyvret/www/nihonjo/ chez OVH)
+# =============================================================================
+#
+#  Part en ligne avec la version de production (construire_version_prod.bat
+#  le copie dans version_prod\). Les dossiers ont en plus le leur :
+#  data/ (tout interdit : la base), api/ et api/lib/ (réglages, code),
+#  assets/ (pas de cache périmé).
+#
+#  ⚠️ L'hébergement porte plusieurs sites, et le .htaccess du dossier PARENT
+#  (/home/odyvret/www/.htaccess, celui d'Odyvresse) s'applique aussi ici.
+#  Le 26/10/2026, sa règle « tout vers /odyvresse_front/ » rendait Nihonjo
+#  introuvable (404 partout). Ce fichier a donc SES règles de réécriture :
+#  elles remplacent celles du parent pour tout le dossier Nihonjo.
+#  Le détail : doc_pour_agents/deploiement.md.
+# =============================================================================
+
+
+# --- 1. Les règles de réécriture de Nihonjo (et pas celles du parent) --------
+#
+# La seule présence de « RewriteEngine On » et de règles ici empêche celles
+# du .htaccess parent de s'appliquer au dossier Nihonjo.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Une seule adresse : nihonjo.odyvresse.com, en https. La connexion Google
+  # (Firebase) et le retour de Discord ne connaissent que celle-là : sur
+  # www.nihonjo…, Firebase refuserait le domaine. 302 (temporaire) : un
+  # mauvais réglage ne reste pas gravé dans les navigateurs.
+  RewriteCond %{HTTP_HOST} ^www\.nihonjo\.odyvresse\.com$ [NC]
+  RewriteRule ^(.*)$ https://nihonjo.odyvresse.com/$1 [R=302,L]
+
+  # http → https : DÉSACTIVÉ, par prudence. Si le serveur ne voit pas le bon
+  # port derrière les équipements d'OVH, la règle renverrait vers https en
+  # boucle (« trop de redirections ») et le site serait de nouveau perdu.
+  # Pour l'essayer : retirer les « # » des trois lignes, envoyer, ouvrir
+  # http://nihonjo.odyvresse.com/ ; en cas de boucle, remettre les « # ».
+  # RewriteCond %{SERVER_PORT} ^80$
+  # RewriteCond %{HTTP_HOST} ^nihonjo\.odyvresse\.com$ [NC]
+  # RewriteRule ^(.*)$ https://nihonjo.odyvresse.com/$1 [R=302,L]
+</IfModule>
+
+
+# --- 2. Page d'accueil, pas de listage --------------------------------------
+Options -Indexes
+DirectoryIndex index.html
+
+
+# --- 3. Les types que le serveur ne connaît pas toujours ---------------------
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+
+# --- 4. Fichiers à ne jamais servir -----------------------------------------
+#
+# Ceinture et bretelles : data/.htaccess interdit déjà tout le dossier de la
+# base. Ici, ce qui ne devrait de toute façon pas être en ligne (une base ou
+# une clé posée au mauvais endroit, une sauvegarde, un fichier caché comme
+# .htpasswd ou .env).
+<FilesMatch "\.(sqlite|sqlite-journal|db|key|keystore|bak|old|zip|7z|tar|gz|sql|log|env|ini|md|bat)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+<FilesMatch "^\.">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+
+# --- 5. Quelques en-têtes de sécurité, sans risque ---------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+
+# --- 6. Mot de passe (FACULTATIF, désactivé) --------------------------------
+#
+# Jusqu'au 26/10/2026, Nihonjo était derrière un mot de passe Basic. Il n'est
+# plus nécessaire : l'API vérifie la connexion Google à chaque appel, et
+# data/ reste interdit. Pour le remettre : retirer les « # » des quatre
+# lignes, et envoyer aussi le fichier .htpasswd dans ce dossier. L'application
+# Android passe quand même (api/.htaccess lève le mot de passe pour elle).
+#
+# AuthType Basic
+# AuthName "Acces restreint - Nihonjo"
+# AuthUserFile /home/odyvret/www/nihonjo/.htpasswd
+# Require valid-user

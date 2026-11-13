@@ -1,0 +1,7 @@
+# ----------------------------------------------------------------------
+# 1. PROTECTION PAR MOT DE PASSE (Uniquement pour Odyvresse Front)
+# ----------------------------------------------------------------------
+AuthType Basic
+AuthName "Acces restreint - Nihonjo"
+AuthUserFile /home/odyvret/www/nihonjo/.htpasswd
+Require valid-user

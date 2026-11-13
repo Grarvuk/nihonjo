@@ -1,0 +1,1731 @@
+/* =====================================================================
+   Nihonjo — feuille de style unique.
+   Charte : CHARTE_GRAPHIQUE.md. Deux thèmes : « cahier » (clair) et
+   « tableau noir » (sombre). Toutes les couleurs passent par les jetons
+   ci-dessous : une couleur écrite en dur ailleurs ne suivra pas le thème.
+   ===================================================================== */
+
+/* ---------- Jetons ---------------------------------------------------- */
+
+/* Palette et typographie transposées de la maquette de Manus (25/10/2026,
+   dossier maquette/ à la racine) : papier crème, encre bleu nuit, indigo
+   pour l'action, menthe / ambre / corail pour les états, cartes douces aux
+   grands rayons. Les NOMS des jetons restent ceux du projet. */
+:root {
+  color-scheme: light;
+  --papier: #F7F7F2;
+  --papier-2: #EFF1ED;
+  --feuille: #FFFFFF;
+  --encre: #19233D;
+  --encre-2: #5F6880;
+  --encre-3: #8C94A5;
+  --trait: #DFE4E2;
+  --trait-fort: #CDD5D3;
+  --quadrillage: #A3B7B2;
+  --guide: #D3E0DC;
+  --grille-page: rgba(53, 84, 101, 0.05);
+
+  --ai: #5864D8;
+  --ai-fonce: #4652C4;
+  --ai-pale: #E9EBFF;
+  --sur-ai: #FFFFFF;
+
+  /* Le bleu nuit des grandes cartes (la priorité de l'accueil). */
+  --nuit: #202D5A;
+  --nuit-2: #2B3D78;
+  --sur-nuit: #FFFFFF;
+  --sur-nuit-2: rgba(255, 255, 255, 0.66);
+
+  --acquis: #4A9B84;
+  --acquis-texte: #2E7A64;
+  --acquis-pale: #E5F3ED;
+  --revoir: #E2AE49;
+  --revoir-texte: #8E6510;
+  --revoir-pale: #FFF6DF;
+  --encours: #6FB3D9;      /* « en cours » : réussi, pas encore acquis (25/10) */
+  --encours-texte: #2B6F94;
+  --encours-pale: #E4F2FA;
+  --rafraichir: #9B7FD4;   /* « à rafraîchir » : acquis il y a longtemps (25/10) */
+  --rafraichir-texte: #6A4FA8;
+  --rafraichir-pale: #F0EBFA;
+  --nouveau: #B3BAC4;
+  --nouveau-pale: #ECEFF1;
+  --erreur: #D9604D;
+  --erreur-pale: #FFF0EB;
+  --shu: #E8705E; /* vermillon des sceaux (hanko) : le mot du jour seulement */
+
+  /* Les teintes des cartes d'exercice (une par famille). */
+  --teinte-violet: #846FD2;
+  --teinte-violet-pale: #F0EDFF;
+  --teinte-corail: #EE806F;
+  --teinte-corail-pale: #FFF0EB;
+  --teinte-bleu: #4F8FD6;
+  --teinte-bleu-pale: #E8F2FC;
+
+  --ombre: 0 18px 50px rgba(31, 42, 75, 0.08);
+  --ombre-douce: 0 8px 20px rgba(31, 42, 75, 0.06);
+
+  --police-ui: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --police-titre: "Manrope", "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --police-main: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+
+  --rayon: 10px;
+  --rayon-carte: 16px;
+  --rayon-grand: 22px;
+  --haut-entete: 4.5rem;
+  --largeur: 77.5rem;
+}
+
+/* Sombre : le bleu nuit de la maquette. ⚠️ Écrit DEUX fois (règle n° 7). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="clair"]) {
+    color-scheme: dark;
+    --papier: #151A29;
+    --papier-2: #1B2235;
+    --feuille: #20283D;
+    --encre: #EDF0FA;
+    --encre-2: #B0B8CD;
+    --encre-3: #8A93AB;
+    --trait: #313B55;
+    --trait-fort: #3F4A68;
+    --quadrillage: #56658A;
+    --guide: #36415E;
+    --grille-page: rgba(214, 224, 255, 0.03);
+    --ai: #8F98FF;
+    --ai-fonce: #B4BAFF;
+    --ai-pale: #2A3263;
+    --sur-ai: #10142A;
+    --nuit: #27346B;
+    --nuit-2: #33458A;
+    --sur-nuit: #FFFFFF;
+    --sur-nuit-2: rgba(255, 255, 255, 0.7);
+    --acquis: #67C2A6;
+    --acquis-texte: #8AD8BF;
+    --acquis-pale: #1D3A35;
+    --revoir: #EBC06A;
+    --revoir-texte: #F2D08C;
+    --revoir-pale: #3A3324;
+    --encours: #7FC3E6;
+    --encours-texte: #A6D6F0;
+    --encours-pale: #1E3442;
+    --rafraichir: #B39DE8;
+    --rafraichir-texte: #CDBDF2;
+    --rafraichir-pale: #2E2644;
+    --nouveau: #5D6884;
+    --nouveau-pale: #283048;
+    --erreur: #F08A78;
+    --erreur-pale: #442A2A;
+    --shu: #F08A78;
+    --teinte-violet: #A897F0;
+    --teinte-violet-pale: #2F2A52;
+    --teinte-corail: #F49C8D;
+    --teinte-corail-pale: #43302F;
+    --teinte-bleu: #7FB1EA;
+    --teinte-bleu-pale: #233650;
+    --ombre: 0 18px 50px rgba(0, 0, 0, 0.28);
+    --ombre-douce: 0 8px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+:root[data-theme="sombre"] {
+  color-scheme: dark;
+  --papier: #151A29;
+  --papier-2: #1B2235;
+  --feuille: #20283D;
+  --encre: #EDF0FA;
+  --encre-2: #B0B8CD;
+  --encre-3: #8A93AB;
+  --trait: #313B55;
+  --trait-fort: #3F4A68;
+  --quadrillage: #56658A;
+  --guide: #36415E;
+  --grille-page: rgba(214, 224, 255, 0.03);
+  --ai: #8F98FF;
+  --ai-fonce: #B4BAFF;
+  --ai-pale: #2A3263;
+  --sur-ai: #10142A;
+  --nuit: #27346B;
+  --nuit-2: #33458A;
+  --sur-nuit: #FFFFFF;
+  --sur-nuit-2: rgba(255, 255, 255, 0.7);
+  --acquis: #67C2A6;
+  --acquis-texte: #8AD8BF;
+  --acquis-pale: #1D3A35;
+  --revoir: #EBC06A;
+  --revoir-texte: #F2D08C;
+  --revoir-pale: #3A3324;
+  --encours: #7FC3E6;
+  --encours-texte: #A6D6F0;
+  --encours-pale: #1E3442;
+  --rafraichir: #B39DE8;
+  --rafraichir-texte: #CDBDF2;
+  --rafraichir-pale: #2E2644;
+  --nouveau: #5D6884;
+  --nouveau-pale: #283048;
+  --erreur: #F08A78;
+  --erreur-pale: #442A2A;
+  --shu: #F08A78;
+  --teinte-violet: #A897F0;
+  --teinte-violet-pale: #2F2A52;
+  --teinte-corail: #F49C8D;
+  --teinte-corail-pale: #43302F;
+  --teinte-bleu: #7FB1EA;
+  --teinte-bleu-pale: #233650;
+  --ombre: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --ombre-douce: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+/* ---------- Base ------------------------------------------------------ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--police-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--encre);
+  background-color: var(--papier);
+  /* Le papier quadrillé du cahier, très discret. */
+  background-image:
+    linear-gradient(var(--grille-page) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grille-page) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-font-smoothing: antialiased;
+}
+
+[lang="ja"] { font-family: var(--police-main); }
+
+h1, h2, h3, h4 { margin: 0; line-height: 1.25; font-weight: 700; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+code, kbd { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.85em; }
+[hidden] { display: none !important; }
+
+:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.evitement {
+  position: absolute; left: 1rem; top: -3rem; z-index: 100;
+  padding: 0.5rem 1rem; background: var(--ai); color: var(--sur-ai); border-radius: var(--rayon);
+}
+.evitement:focus { top: 0.75rem; }
+
+/* ---------- En-tête et navigation ------------------------------------- */
+
+.entete {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 1.5rem;
+  height: var(--haut-entete);
+  padding: 0 max(1rem, calc((100vw - var(--largeur)) / 2));
+  background: var(--papier); /* repli : color-mix() exige Safari 16.2 */
+  background: color-mix(in srgb, var(--papier) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--trait);
+}
+
+.marque { display: inline-flex; align-items: center; gap: 0.7rem; color: var(--encre); text-decoration: none; }
+.marque-cases { display: inline-flex; padding-left: 1px; }
+.marque-cases span {
+  display: inline-grid; place-items: center;
+  width: 1.7rem; height: 1.7rem; margin-left: -1px;
+  font-size: 1.05rem; font-weight: 600; line-height: 1;
+  background-color: var(--feuille);
+  border: 1px solid var(--quadrillage);
+  background-image:
+    repeating-linear-gradient(to right, var(--guide) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(to bottom, var(--guide) 0 2px, transparent 2px 4px);
+  background-size: 100% 1px, 1px 100%;
+  background-position: 0 50%, 50% 0;
+  background-repeat: no-repeat;
+}
+.marque-nom { font-weight: 700; font-size: 1.1rem; letter-spacing: 0.01em; }
+
+.navigation { display: flex; gap: 0.25rem; margin-right: auto; }
+.navigation a {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.8rem; border-radius: var(--rayon);
+  color: var(--encre-2); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+}
+.navigation a:hover { background: var(--papier-2); color: var(--encre); }
+.navigation a[aria-current="page"] { color: var(--ai); background: var(--ai-pale); }
+.navigation .icone { width: 1.15rem; height: 1.15rem; }
+
+/* ---------- Mise en page ---------------------------------------------- */
+
+.vue {
+  max-width: var(--largeur);
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  outline: none;
+}
+@media (min-width: 760px) { .vue { padding: 2.5rem 2rem 5rem; } }
+
+.chargement, .panne { text-align: center; color: var(--encre-2); padding: 4rem 1rem; }
+.panne { max-width: 36rem; margin: 3rem auto; display: grid; gap: 1rem; justify-items: center; }
+.panne h1 { font-size: 1.5rem; color: var(--encre); }
+
+.feuille {
+  background: var(--feuille);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  padding: 1.25rem;
+}
+@media (min-width: 760px) { .feuille { padding: 1.5rem 1.75rem; } }
+
+.entete-vue { margin-bottom: 1.75rem; }
+.entete-vue h1 { font-size: 1.75rem; letter-spacing: -0.01em; }
+@media (min-width: 760px) { .entete-vue h1 { font-size: 2rem; } }
+.sous-titre { margin-top: 0.35rem; color: var(--encre-2); font-size: 0.95rem; max-width: 60ch; }
+.entete-avec-action { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+
+.barre-vue { margin: -0.5rem 0 1rem; }
+
+.icone { width: 1.15rem; height: 1.15rem; flex: none; }
+
+/* ---------- Boutons --------------------------------------------------- */
+
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 2.75rem; padding: 0 1.1rem;
+  border: 1px solid transparent; border-radius: var(--rayon);
+  font-weight: 500; font-size: 0.95rem; line-height: 1.2;
+  text-decoration: none; white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.bouton:disabled { opacity: 0.55; cursor: not-allowed; }
+.bouton-principal { background: var(--ai); color: var(--sur-ai); }
+.bouton-principal:hover:not(:disabled) { background: var(--ai-fonce); }
+.bouton-secondaire { background: var(--feuille); color: var(--ai); border-color: var(--trait-fort); }
+.bouton-secondaire:hover:not(:disabled) { background: var(--ai-pale); border-color: var(--ai); }
+.bouton-discret { background: transparent; color: var(--encre-2); }
+.bouton-discret:hover:not(:disabled) { background: var(--papier-2); color: var(--encre); }
+.bouton-danger { background: var(--erreur); color: #fff; }
+.bouton-danger:hover:not(:disabled) { filter: brightness(0.92); }
+.bouton-petit { min-height: 2.1rem; padding: 0 0.75rem; font-size: 0.85rem; }
+.bouton-petit .icone { width: 1rem; height: 1rem; }
+.bouton-large { width: 100%; }
+.barre-vue .bouton-discret, .exercice-barre .bouton-discret { padding-left: 0.6rem; }
+
+.bouton-icone {
+  display: inline-grid; place-items: center; flex: none;
+  width: 2.5rem; height: 2.5rem; padding: 0;
+  border: 1px solid transparent; border-radius: var(--rayon);
+  background: transparent; color: var(--encre-2);
+}
+.bouton-icone:hover { background: var(--papier-2); color: var(--encre); }
+.bouton-icone-danger:hover { color: var(--erreur); background: var(--erreur-pale); }
+.bouton-icone[aria-expanded="true"] { background: var(--ai-pale); color: var(--ai); border-color: var(--ai); }
+
+.lien {
+  padding: 0.2rem 0; border: 0; background: none;
+  color: var(--ai); font-size: 0.85rem; font-weight: 500;
+}
+.lien:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Champs ---------------------------------------------------- */
+
+.champ { display: grid; gap: 0.35rem; min-width: 0; }
+.champ-libelle { font-size: 0.8rem; font-weight: 500; color: var(--encre-2); }
+.champ-libelle abbr { text-decoration: none; color: var(--erreur); }
+
+input[type="text"], input[type="search"], input[type="number"], select {
+  width: 100%; height: 2.75rem; padding: 0 0.85rem;
+  border: 1px solid var(--trait-fort); border-radius: var(--rayon);
+  background-color: var(--feuille); color: var(--encre);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input::placeholder { color: var(--encre-3); }
+input:focus, select:focus { outline: none; border-color: var(--ai); box-shadow: 0 0 0 3px var(--ai-pale); }
+select {
+  appearance: none; padding-right: 2.25rem; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8493' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1rem;
+}
+input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--ai); cursor: pointer; margin: 0; }
+
+.champ-avec-bouton { display: flex; gap: 0.4rem; align-items: center; }
+
+.champ-recherche { position: relative; display: block; flex: 1 1 18rem; }
+.champ-recherche .icone { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--encre-3); pointer-events: none; }
+.champ-recherche input { padding-left: 2.5rem; }
+.champ-recherche-petit { margin: 0.75rem 0; }
+
+/* Contrôle segmenté */
+.segments { border: 0; margin: 0; padding: 0; min-width: 0; }
+.segments legend { padding: 0; margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 500; color: var(--encre-2); }
+.segments-rangee { display: flex; border: 1px solid var(--trait-fort); border-radius: var(--rayon); overflow: hidden; background: var(--feuille); }
+.segments label { flex: 1 1 auto; position: relative; }
+.segments input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.segments span {
+  display: block; padding: 0.55rem 0.7rem; text-align: center; white-space: nowrap;
+  font-size: 0.85rem; font-weight: 500; color: var(--encre-2);
+  border-left: 1px solid var(--trait);
+}
+.segments label:first-child span { border-left: 0; }
+.segments input:checked + span { background: var(--ai); color: var(--sur-ai); }
+.segments input:focus-visible + span { outline: 2px solid var(--ai); outline-offset: -3px; }
+
+/* Interrupteur */
+.interrupteur { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: var(--encre-2); }
+.interrupteur input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.interrupteur-piste { position: relative; width: 2.3rem; height: 1.35rem; border-radius: 999px; background: var(--trait-fort); transition: background-color 0.2s; flex: none; }
+.interrupteur-piste::after {
+  content: ""; position: absolute; top: 0.175rem; left: 0.175rem;
+  width: 1rem; height: 1rem; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); transition: transform 0.2s;
+}
+.interrupteur input:checked + .interrupteur-piste { background: var(--ai); }
+.interrupteur input:checked + .interrupteur-piste::after { transform: translateX(0.95rem); }
+.interrupteur input:focus-visible + .interrupteur-piste { outline: 2px solid var(--ai); outline-offset: 2px; }
+
+/* ---------- Cases (genkō yōshi) — l'élément fort ---------------------- */
+
+.masu-bloc { display: inline-flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+.masu-ligne { display: inline-flex; flex-wrap: wrap; justify-content: center; padding: 0 0 2px 2px; }
+.masu {
+  --t: 4.75rem;
+  display: inline-grid; place-items: center;
+  width: var(--t); height: var(--t);
+  margin: 0 0 -2px -2px;
+  font-family: var(--police-main); font-weight: 600;
+  font-size: calc(var(--t) * 0.6); line-height: 1;
+  color: var(--encre);
+  background-color: var(--feuille);
+  border: 2px solid var(--quadrillage);
+  background-image:
+    repeating-linear-gradient(to right, var(--guide) 0 5px, transparent 5px 10px),
+    repeating-linear-gradient(to bottom, var(--guide) 0 5px, transparent 5px 10px);
+  background-size: 100% 1px, 1px 100%;
+  background-position: 0 50%, 50% 0;
+  background-repeat: no-repeat;
+}
+.masu-grand .masu { --t: clamp(2.75rem, calc((100vw - 4.5rem) / var(--n, 4)), 5.5rem); }
+.masu-moyen .masu { --t: 3.4rem; }
+.masu-petit .masu { --t: 2.4rem; }
+.masu-trou {
+  border-color: var(--ai);
+  border-style: dashed;
+  background-color: var(--ai-pale);
+  position: relative; z-index: 1;
+  animation: attente-trou 1.6s ease-in-out infinite;
+}
+@keyframes attente-trou { 50% { border-color: var(--quadrillage); } }
+.masu-lecture { font-size: 1.15rem; color: var(--encre-2); letter-spacing: 0.08em; }
+
+.masu-essai { color: var(--acquis); font-weight: 400; }
+.masu-faite { background-color: var(--acquis-pale); }
+
+/* ---------- Statuts ---------------------------------------------------- */
+
+.barre-statuts {
+  display: flex; width: 100%; height: 4px;
+  border-radius: 2px; overflow: hidden;
+  background: var(--nouveau-pale);
+}
+.barre-statuts i { display: block; height: 100%; transition: width 0.3s; }
+.seg-acquis { background: var(--acquis); }
+.seg-a-revoir { background: var(--revoir); }
+.seg-en-cours { background: var(--encours); }
+.seg-a-rafraichir { background: var(--rafraichir); }
+.barre-grande { height: 10px; border-radius: 5px; }
+
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 0.15rem 0.6rem; border: 0; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 500; line-height: 1.5; white-space: nowrap;
+}
+.badge-acquis { background: var(--acquis-pale); color: var(--acquis-texte); }
+.badge-a-revoir { background: var(--revoir-pale); color: var(--revoir-texte); }
+.badge-en-cours { background: var(--encours-pale); color: var(--encours-texte); }
+.badge-a-rafraichir { background: var(--rafraichir-pale); color: var(--rafraichir-texte); }
+.badge-non-acquis { background: var(--nouveau-pale); color: var(--encre-2); }
+button.badge:hover { box-shadow: 0 0 0 1px currentColor; }
+
+.pastille { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; }
+.pastille-acquis { background: var(--acquis); }
+.pastille-a-revoir { background: var(--revoir); }
+.pastille-en-cours { background: var(--encours); }
+.pastille-a-rafraichir { background: var(--rafraichir); }
+.pastille-non-acquis { background: var(--nouveau); }
+
+/* ---------- Puces ------------------------------------------------------ */
+
+.puces { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.puces-chapitres { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.6rem; padding: 0.45rem 0.45rem 0 0; }
+@media (max-width: 560px) { .puces-chapitres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem 0.55rem; } }
+.puce-chapitre {
+  position: relative;
+  display: grid; gap: 0.45rem; min-width: 7.5rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid var(--trait-fort); border-radius: var(--rayon);
+  background: var(--feuille); text-align: left;
+  transition: border-color 0.15s, background-color 0.15s, opacity 0.15s;
+}
+.puces-chapitres .puce-chapitre { min-width: 0; }
+.puce-chapitre:hover { border-color: var(--ai); }
+/* Chapitre exclu : bord en pointillés, comme les traits de repère des cases. */
+.puce-chapitre[aria-pressed="false"] { border-style: dashed; background: transparent; }
+.puce-ligne { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.puce-nom { font-weight: 500; font-size: 0.9rem; color: var(--encre-3); line-height: 1.25; }
+.puce-nb { font-size: 0.75rem; color: var(--encre-3); font-variant-numeric: tabular-nums; }
+.puce-chapitre .barre-statuts { opacity: 0.4; }
+.puce-chapitre > .icone {
+  position: absolute; top: -0.45rem; right: -0.45rem;
+  width: 1.15rem; height: 1.15rem; padding: 0.15rem;
+  box-shadow: 0 0 0 2px var(--papier);
+  border-radius: 50%; background: var(--ai); color: var(--sur-ai); stroke-width: 3;
+  opacity: 0; transform: scale(0.6); transition: opacity 0.15s, transform 0.15s;
+}
+/* Chapitre retenu : bord indigo plein et coche ; le fond reste du papier. */
+.puce-chapitre[aria-pressed="true"] { border-color: var(--ai); box-shadow: inset 0 0 0 1px var(--ai); }
+.puce-chapitre[aria-pressed="true"] .puce-nom { color: var(--encre); font-weight: 700; }
+.puce-chapitre[aria-pressed="true"] .barre-statuts { opacity: 1; }
+.puce-chapitre[aria-pressed="true"] > .icone { opacity: 1; transform: none; }
+@media (max-width: 560px) {
+  .puce-chapitre { padding: 0.55rem 0.55rem 0.6rem; }
+  .puce-ligne { flex-direction: column; gap: 0; }
+  .puce-nom { font-size: 0.85rem; }
+}
+
+.puce {
+  padding: 0.35rem 0.75rem; border: 1px solid var(--trait-fort); border-radius: 999px;
+  background: var(--feuille); font-size: 0.85rem; font-weight: 500; color: var(--encre-2);
+}
+.puce:hover { border-color: var(--ai); color: var(--encre); }
+.puce[aria-pressed="true"] { background: var(--ai); border-color: var(--ai); color: var(--sur-ai); }
+.puces-compactes { gap: 0.35rem; }
+
+.etiquettes {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
+  min-height: 2.75rem; padding: 0.3rem 0.4rem;
+  border: 1px solid var(--trait-fort); border-radius: var(--rayon); background: var(--feuille);
+}
+.etiquettes:focus-within { border-color: var(--ai); box-shadow: 0 0 0 3px var(--ai-pale); }
+.etiquettes input { flex: 1 1 8rem; height: 2rem; border: 0; padding: 0 0.35rem; background: transparent; }
+.etiquettes input:focus { box-shadow: none; }
+.etiquette {
+  display: inline-flex; align-items: center; gap: 0.15rem;
+  padding: 0.15rem 0.25rem 0.15rem 0.65rem; border-radius: 999px;
+  background: var(--ai-pale); color: var(--ai-fonce); font-size: 0.85rem; font-weight: 500;
+}
+.etiquette button { display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; padding: 0; border: 0; border-radius: 50%; background: none; color: inherit; }
+.etiquette button:hover { background: var(--feuille); background: color-mix(in srgb, var(--ai) 18%, transparent); }
+.etiquette .icone { width: 0.8rem; height: 0.8rem; }
+.etiquette-lecture { padding: 0.1rem 0.55rem; margin: 0 0.25rem 0.25rem 0; background: var(--papier-2); color: var(--encre-2); font-size: 0.78rem; }
+
+/* ---------- Accueil (« Réviser ») ------------------------------------ */
+/* Transposé de la maquette de Manus (25/10/2026) : un grand titre, la carte
+   bleu nuit « Votre priorité » (l'action principale), le mot du jour, la
+   bande des trois anneaux, puis les exercices et le choix des mots. */
+
+.accueil {
+  display: grid; gap: 1.1rem;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "bienvenue" "priorite" "progres" "exercices" "mdj" "choix";
+}
+@media (min-width: 960px) {
+  .accueil {
+    grid-template-columns: minmax(0, 1.8fr) minmax(16rem, 0.8fr);
+    grid-template-areas: "bienvenue bienvenue" "priorite mdj" "progres progres" "exercices exercices" "choix choix";
+  }
+}
+.accueil-bienvenue { grid-area: bienvenue; margin: 0.5rem 0 0.9rem; }
+.carte-priorite { grid-area: priorite; }
+.mot-du-jour { grid-area: mdj; }
+.bande-progres { grid-area: progres; }
+.accueil-exercices { grid-area: exercices; margin-top: 2.25rem; }
+.accueil-choix { grid-area: choix; margin-top: 2.25rem; scroll-margin-top: calc(var(--haut-entete) + 1rem); }
+
+.accueil-bienvenue h1 {
+  font-size: clamp(2rem, 4.2vw, 3.35rem); line-height: 1.04; letter-spacing: -0.055em;
+  margin: 0.35rem 0 0.8rem;
+}
+.accueil-bienvenue h1 em { font-style: normal; color: var(--ai); }
+.accueil-etat { color: var(--encre-2); max-width: 58ch; font-size: 1rem; }
+.accueil-bienvenue .surtitre [lang="ja"] { letter-spacing: 0.05em; }
+
+/* La carte « Votre priorité » : le bleu nuit, un grand caractère, le bouton. */
+.carte-priorite {
+  position: relative; overflow: hidden;
+  display: grid; align-content: space-between; gap: 1rem;
+  min-height: 18rem; padding: 1.4rem 1.5rem 1.5rem;
+  border-radius: var(--rayon-grand);
+  background: var(--nuit); /* repli */
+  background: linear-gradient(125deg, var(--nuit-2) 0%, var(--nuit) 70%);
+  color: var(--sur-nuit);
+  box-shadow: 0 20px 36px rgba(30, 44, 91, 0.2);
+}
+.carte-priorite::after {
+  content: ""; position: absolute; width: 26rem; height: 26rem; right: -10rem; bottom: -17rem;
+  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50%;
+  box-shadow: 0 0 0 2.2rem rgba(255, 255, 255, 0.025), 0 0 0 4.4rem rgba(255, 255, 255, 0.018);
+  pointer-events: none;
+}
+.priorite-tete { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.priorite-etiquette {
+  padding: 0.25rem 0.65rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 999px;
+  color: var(--sur-nuit-2); font-size: 0.75rem; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.priorite-corps { position: relative; z-index: 1; display: flex; align-items: center; gap: clamp(1.25rem, 5vw, 4.5rem); }
+.priorite-mot { flex: none; display: grid; justify-items: center; gap: 0.35rem; width: 8.5rem; text-align: center; }
+.priorite-glyphe { font-size: clamp(3.6rem, 9vw, 6.4rem); line-height: 1; color: var(--sur-nuit); white-space: nowrap; }
+.priorite-glyphe[data-longueur="2"] { font-size: clamp(2.8rem, 6vw, 4.2rem); }
+.priorite-glyphe[data-longueur="3"] { font-size: clamp(2.2rem, 4.4vw, 3rem); }
+.priorite-glyphe[data-longueur="4"] { font-size: clamp(1.7rem, 3.4vw, 2.3rem); }
+.priorite-lecture { color: var(--sur-nuit-2); font-size: 0.82rem; letter-spacing: 0.03em; }
+.priorite-texte h2 { margin: 0 0 0.55rem; color: var(--sur-nuit); font-size: clamp(1.3rem, 2.3vw, 2rem); line-height: 1.13; letter-spacing: -0.045em; }
+.priorite-texte p { max-width: 34rem; margin-bottom: 1.1rem; color: var(--sur-nuit-2); font-size: 0.9rem; }
+.carte-priorite .champ-libelle { color: var(--sur-nuit-2); }
+.carte-priorite .champ-nombre-mots input {
+  border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.08); color: var(--sur-nuit);
+}
+@media (max-width: 640px) {
+  .priorite-corps { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  .priorite-mot { width: auto; justify-items: start; text-align: left; grid-auto-flow: column; align-items: end; gap: 0.75rem; }
+}
+
+.accueil-lancer { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; }
+.champ-nombre-mots { width: 7.5rem; }
+.champ-nombre-mots input { text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) {
+  .accueil-lancer { display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem; align-items: end; }
+  .champ-nombre-mots { width: auto; }
+}
+
+/* Le grand bouton : blanc sur la carte bleu nuit. */
+.bouton-hero {
+  min-height: 3.4rem; padding: 0.55rem 1.3rem 0.55rem 1.05rem; gap: 0.75rem;
+  border-radius: 12px; text-align: left; white-space: normal;
+  background: var(--sur-nuit); color: var(--nuit); border: 0;
+  box-shadow: 0 10px 18px rgba(7, 14, 48, 0.18);
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+.bouton-hero .icone { width: 1.2rem; height: 1.2rem; }
+.bouton-hero-texte { display: grid; gap: 0.05rem; }
+.bouton-hero-texte b { font-family: var(--police-titre); font-size: 1.02rem; font-weight: 800; letter-spacing: -0.02em; }
+.bouton-hero-texte small { font-size: 0.78rem; font-weight: 400; opacity: 0.75; }
+.bouton-hero:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(7, 14, 48, 0.24); }
+.bouton-hero:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 4px 10px rgba(7, 14, 48, 0.2); }
+.bouton-hero:disabled { opacity: 0.6; }
+
+/* Le mot du jour, marqué d'un sceau (hanko) vermillon : le seul rouge de l'écran. */
+.mot-du-jour {
+  position: relative; display: grid; gap: 0.8rem; justify-items: center; align-content: center; text-align: center;
+  padding: 3.5rem 1.4rem 1.4rem; min-height: 18rem;
+  border: 1px solid var(--trait); border-radius: var(--rayon-grand);
+  background: var(--feuille); box-shadow: var(--ombre-douce);
+}
+.mot-du-jour .masu-grand .masu { --t: clamp(3.2rem, calc((100vw - 6rem) / var(--n, 3)), 4.3rem); }
+.mot-du-jour h2 { position: absolute; top: 1.45rem; left: 1.45rem; margin: 0; }
+.sceau {
+  position: absolute; top: 1rem; right: 1rem;
+  display: inline-grid; place-items: center;
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  border: 1.5px solid var(--shu); color: var(--shu);
+  font-size: 0.75rem; font-weight: 500; line-height: 1; letter-spacing: -0.05em;
+  transform: rotate(-8deg);
+}
+.mdj-cases { padding-top: 0.25rem; }
+.mdj-reponse { display: grid; gap: 0.2rem; justify-items: center; animation: apparitionDouce 0.25s ease-out backwards; }
+.mdj-lecture { font-size: 1rem; letter-spacing: 0.06em; color: var(--encre-2); }
+.mdj-sens { font-family: var(--police-titre); font-weight: 700; font-size: 1rem; }
+.mdj-reponse .badge { margin-top: 0.3rem; }
+@keyframes apparitionDouce { from { opacity: 0; transform: translateY(4px); } }
+
+/* La bande de progression : une phrase, trois anneaux. */
+.bande-progres {
+  display: grid; gap: 1.1rem 1.75rem; align-items: center;
+  padding: 1.35rem 1.4rem;
+  border: 1px solid var(--trait); border-radius: 18px;
+  background: var(--feuille); box-shadow: var(--ombre-douce);
+}
+@media (min-width: 900px) { .bande-progres { grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr); } }
+.bande-intro strong { display: block; margin-top: 0.45rem; font-family: var(--police-titre); font-size: 0.92rem; line-height: 1.35; letter-spacing: -0.02em; }
+.accueil-progres { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; }
+.progres-ligne {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto;
+  column-gap: 0.7rem; align-items: center;
+}
+.progres-ligne dt { grid-column: 2; grid-row: 1; align-self: end; font-family: var(--police-titre); font-size: 0.86rem; font-weight: 700; color: var(--encre); }
+.progres-ligne dt small { display: block; font-family: var(--police-ui); font-size: 0.7rem; font-weight: 400; color: var(--encre-3); }
+/* José, 25/10 : « N acquis sur M » tient sur UNE ligne. */
+.progres-texte { grid-column: 2; grid-row: 2; align-self: start; margin: 0; white-space: nowrap; font-size: 0.75rem; color: var(--encre-3); font-variant-numeric: tabular-nums; }
+.progres-texte b { font-size: 0.85rem; color: var(--encre); }
+.anneau {
+  grid-column: 1; grid-row: 1 / 3; margin: 0;
+  position: relative; width: 3.25rem; height: 3.25rem; border-radius: 50%;
+  display: grid; place-items: center;
+  --teinte: var(--ai);
+  background: var(--trait); /* repli */
+  /* ⚠️ --part-acquis / --part-rafraichir / --part-encours / --part-revoir,
+     pas --acquis / --revoir : ceux-là sont des COULEURS du thème, les
+     écraser casse le dégradé sans erreur. Les deux du milieu valent 0 pour
+     les kana. */
+  --part-rafraichir: 0;
+  --part-encours: 0;
+  background: conic-gradient(var(--teinte) calc(var(--part-acquis) * 1%),
+    var(--rafraichir) 0 calc((var(--part-acquis) + var(--part-rafraichir)) * 1%),
+    var(--encours) 0 calc((var(--part-acquis) + var(--part-rafraichir) + var(--part-encours)) * 1%),
+    var(--revoir) 0 calc((var(--part-acquis) + var(--part-rafraichir) + var(--part-encours) + var(--part-revoir)) * 1%), var(--trait) 0);
+}
+.anneau::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--feuille); }
+.anneau span { position: relative; z-index: 1; font-size: 0.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.anneau-menthe { --teinte: var(--acquis); }
+.anneau-corail { --teinte: var(--teinte-corail); }
+.anneau-violet { --teinte: var(--teinte-violet); }
+/* Téléphone : les trois anneaux côte à côte, le texte dessous (sur une ligne). */
+@media (max-width: 640px) {
+  .accueil-progres { gap: 0.4rem; }
+  .progres-ligne { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; justify-items: center; text-align: center; row-gap: 0.25rem; }
+  .anneau { grid-column: 1; grid-row: 1; }
+  .progres-ligne dt { grid-column: 1; grid-row: 2; font-size: 0.8rem; }
+  .progres-ligne dt small { display: none; }
+  .progres-texte { grid-column: 1; grid-row: 3; font-size: 0.68rem; }
+  .progres-texte b { font-size: 0.78rem; }
+}
+@media (max-width: 560px) { .bouton-hero-texte small { display: none; } }
+
+/* Titres de section : un surtitre, un titre fort. */
+.titre-section { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0.4rem 1rem; margin-bottom: 1rem; }
+.titre-section h2 { margin-top: 0.35rem; font-size: 1.4rem; letter-spacing: -0.045em; }
+.titre-section-note { font-size: 0.86rem; color: var(--encre-2); }
+.famille { margin: 1.25rem 0 0.7rem; font-size: 0.8rem; font-weight: 600; color: var(--encre-3); }
+
+/* Les cartes d'exercice : surtitre, exemple dans une pastille teintée, flèche. */
+.cartes { display: grid; gap: 0.85rem; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
+@media (max-width: 560px) { .cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; } }
+.carte-exercice {
+  position: relative;
+  display: grid; align-content: start; gap: 0.25rem;
+  min-height: 11.5rem; padding: 1.05rem 1rem 0.95rem;
+  border: 1px solid var(--trait); border-radius: 14px;
+  background: var(--feuille); color: var(--encre); text-align: left; text-decoration: none;
+  box-shadow: 0 5px 12px rgba(31, 42, 75, 0.025);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  --teinte: var(--ai); --teinte-pale: var(--ai-pale);
+}
+.carte-exercice:hover:not(:disabled) { border-color: var(--ai); transform: translateY(-3px); box-shadow: 0 13px 24px rgba(38, 48, 102, 0.11); }
+.carte-exercice:active:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(38, 48, 102, 0.1); }
+.carte-exercice:disabled { opacity: 0.5; cursor: not-allowed; }
+.teinte-violet { --teinte: var(--teinte-violet); --teinte-pale: var(--teinte-violet-pale); }
+.teinte-menthe { --teinte: var(--acquis); --teinte-pale: var(--acquis-pale); }
+.teinte-corail { --teinte: var(--teinte-corail); --teinte-pale: var(--teinte-corail-pale); }
+.teinte-soleil { --teinte: var(--revoir); --teinte-pale: var(--revoir-pale); }
+.teinte-bleu { --teinte: var(--teinte-bleu); --teinte-pale: var(--teinte-bleu-pale); }
+.carte-exemple {
+  justify-self: start;
+  display: flex; align-items: center; gap: 0.35rem; min-height: 2.9rem; margin-bottom: 0.9rem;
+  padding: 0.3rem 0.55rem; border-radius: 8px; background: var(--teinte-pale); color: var(--encre-3);
+}
+.carte-exemple .masu-petit .masu { --t: 2.1rem; }
+.carte-exemple .masu-trou { animation: none; }
+.carte-exemple > .icone { width: 0.85rem; height: 0.85rem; }
+.carte-fleche { position: absolute; top: 1.15rem; right: 1rem; color: var(--encre-3); transition: transform 0.2s, color 0.2s; }
+.carte-fleche .icone { width: 1rem; height: 1rem; }
+.carte-exercice:hover:not(:disabled) .carte-fleche { color: var(--ai); transform: translateX(3px); }
+.carte-fr { font-weight: 700; font-size: 1rem; color: var(--encre); }
+.carte-nom { font-family: var(--police-titre); font-weight: 700; font-size: 0.98rem; line-height: 1.25; letter-spacing: -0.03em; }
+.carte-promesse { font-size: 0.8rem; color: var(--encre-2); line-height: 1.4; }
+.carte-nb { margin-top: auto; padding-top: 0.55rem; font-size: 0.75rem; color: var(--encre-3); font-variant-numeric: tabular-nums; }
+.carte-exercice .barre-statuts { margin-top: 0.35rem; }
+/* L'exercice que lance le grand bouton (exerciceConseille) : repéré d'un trait. */
+.carte-dernier { border-color: var(--ai); }
+.carte-dernier .carte-fleche { display: none; }
+.carte-dernier::after {
+  content: "conseillé"; position: absolute; top: 0.95rem; right: 0.9rem;
+  font-size: 0.66rem; font-weight: 700; color: var(--ai);
+}
+.carte-exemple-tableau { display: grid; grid-template-columns: repeat(3, 1.45rem); gap: 0; padding: 0 0 1px 1px; font-family: var(--police-main); }
+.carte-exemple-tableau span { display: grid; place-items: center; height: 1.3rem; margin: 0 0 -1px -1px; border: 1px solid var(--trait-fort); font-size: 0.8rem; color: var(--encre-2); }
+.carte-lien { border-style: dashed; background: transparent; box-shadow: none; }
+.carte-lien .carte-exemple { background: transparent; padding-left: 0; }
+@media (max-width: 560px) {
+  .carte-exercice { min-height: 0; padding: 0.85rem 0.8rem 0.8rem; }
+  .carte-promesse { display: none; }
+  .carte-nom { font-size: 0.9rem; }
+  .carte-exemple { margin-bottom: 0.55rem; }
+  .carte-exemple .masu-petit .masu { --t: 1.85rem; }
+  .carte-dernier::after { content: none; }
+  .carte-fleche { display: none; }
+}
+
+/* Le choix des mots */
+.choix-grille { display: grid; gap: 1.5rem; align-items: start; }
+@media (min-width: 960px) {
+  .choix-grille { grid-template-columns: minmax(0, 1fr) 21rem; gap: 2.5rem; }
+  .choix-grille .panneau-selection { position: sticky; top: calc(var(--haut-entete) + 1.25rem); }
+}
+.panneau-selection .bouton-large { margin-top: 1.25rem; }
+
+.categorie + .categorie { margin-top: 1.5rem; }
+.categorie-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.75rem; margin-bottom: 0.6rem; }
+.categorie-tete h2, .categorie-tete h3 { font-size: 1rem; }
+/* D'où viennent les chapitres du manuel (12/11) : sous le titre, sur toute la largeur. */
+.categorie-note, .groupe-manuel { flex-basis: 100%; margin: 0; font-size: 0.82rem; line-height: 1.45; color: var(--encre-3); }
+.groupe-manuel { margin: -0.2rem 0 0.5rem; }
+.compte { font-size: 0.85rem; color: var(--encre-3); }
+.categorie-actions { display: inline-flex; gap: 0.9rem; margin-left: auto; }
+
+.selection-total { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.75rem; color: var(--encre-2); }
+.selection-nombre { font-family: var(--police-main); font-weight: 600; font-size: 2.6rem; line-height: 1; color: var(--encre); font-variant-numeric: tabular-nums; }
+.legende { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; margin: 0.7rem 0 0; padding: 0; list-style: none; font-size: 0.82rem; color: var(--encre-2); }
+.legende li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legende b { color: var(--encre); font-variant-numeric: tabular-nums; }
+.filtres { display: grid; gap: 1rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--trait); }
+
+.bandeau {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem;
+  margin: 0.5rem 0 1rem; padding: 1rem 1.15rem;
+  border: 1px solid var(--revoir);
+  border: 1px solid color-mix(in srgb, var(--revoir) 45%, transparent);
+  border-radius: var(--rayon); background: var(--revoir-pale);
+}
+.bandeau > .icone { width: 1.5rem; height: 1.5rem; color: var(--revoir-texte); }
+.bandeau p { flex: 1 1 18rem; font-size: 0.92rem; }
+
+/* ---------- Exercice --------------------------------------------------- */
+
+.exercice { max-width: 42rem; margin: 0 auto; }
+.exercice-barre { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: -0.5rem 0 0.75rem; }
+.exercice-titre { font-size: 0.9rem; font-weight: 500; color: var(--encre-2); text-align: center; }
+.exercice-score { display: inline-flex; gap: 0.9rem; font-family: var(--police-main); font-size: 1.05rem; }
+.exercice-score b { font-variant-numeric: tabular-nums; }
+.note-bonne { color: var(--acquis-texte); }
+.note-fausse { color: var(--erreur); }
+.exercice-position { font-size: 0.85rem; color: var(--encre-3); }
+
+.jauge { height: 3px; margin-bottom: 1.25rem; border-radius: 2px; background: var(--trait); overflow: hidden; }
+.jauge i { display: block; height: 100%; width: 0; background: var(--ai); transition: width 0.35s ease; }
+
+.feuille-exercice {
+  text-align: center;
+  padding: 1.5rem 1.1rem 1.75rem;
+  /* Une pile de feuilles : la seule feuille de l'application à avoir de l'épaisseur. */
+  box-shadow: 5px 5px 0 -1px var(--feuille), 5px 5px 0 0 var(--trait);
+}
+@media (min-width: 760px) { .feuille-exercice { padding: 1.75rem 2.25rem 2.25rem; } }
+
+.exercice-tete { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.consigne { margin: 1.25rem 0 1.5rem; color: var(--encre-2); font-size: 0.95rem; }
+.question { display: flex; justify-content: center; min-height: 5.5rem; margin: 0 auto 1.1rem; }
+.question-fr { font-size: clamp(1.6rem, 5vw, 2.3rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; margin: 0.4rem 0 0.6rem; }
+.aide { display: grid; gap: 0.2rem; min-height: 1.5rem; color: var(--encre-2); }
+.aide-sens { font-weight: 500; color: var(--encre); font-size: 1.05rem; }
+.aide-contexte { font-size: 0.88rem; color: var(--encre-3); }
+
+.saisie { display: flex; gap: 0.5rem; max-width: 27rem; margin: 1.5rem auto 0; }
+.champ-reponse { height: 3.4rem !important; font-size: 1.35rem; text-align: center; }
+.champ-reponse:disabled { background: var(--papier); color: var(--encre-2); }
+.bouton-clavier { width: 3.4rem; height: 3.4rem; border-color: var(--trait-fort); background: var(--feuille); }
+.champ-bon { border-color: var(--acquis) !important; box-shadow: 0 0 0 3px var(--acquis-pale) !important; }
+.champ-faux { border-color: var(--erreur) !important; box-shadow: 0 0 0 3px var(--erreur-pale) !important; animation: secousse 0.3s; }
+@keyframes secousse { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+.feuille-exercice .actions { justify-content: center; margin-top: 1.25rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+
+.tuiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.45rem; max-width: 22rem; margin: 1.25rem auto 0; }
+.tuile {
+  aspect-ratio: 1; padding: 0;
+  font-size: 1.75rem; font-weight: 600; line-height: 1;
+  border: 2px solid var(--quadrillage); border-radius: 2px;
+  background-color: var(--feuille); color: var(--encre);
+  background-image:
+    repeating-linear-gradient(to right, var(--guide) 0 4px, transparent 4px 8px),
+    repeating-linear-gradient(to bottom, var(--guide) 0 4px, transparent 4px 8px);
+  background-size: 100% 1px, 1px 100%; background-position: 0 50%, 50% 0; background-repeat: no-repeat;
+  transition: transform 0.1s, border-color 0.15s;
+}
+.tuile:hover:not(:disabled) { border-color: var(--ai); transform: translateY(-2px); }
+.tuile:disabled { cursor: default; }
+.tuile-bonne { border-color: var(--acquis); background-color: var(--acquis-pale); }
+.tuile-fausse { border-color: var(--erreur); background-color: var(--erreur-pale); }
+
+.correction { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px dashed var(--quadrillage); }
+.correction-tete { display: flex; align-items: center; justify-content: center; gap: 0.85rem; text-align: left; }
+.correction-tete strong { display: block; font-size: 1.2rem; }
+.correction-bonne strong { color: var(--acquis-texte); }
+.correction-fausse strong { color: var(--erreur); }
+.correction-saisie { display: block; font-size: 0.88rem; color: var(--encre-2); }
+.note-trait { width: 3rem; height: 3rem; flex: none; }
+.note-trait circle, .note-trait path {
+  fill: none; stroke-width: 3.5; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: trace 0.45s ease-out forwards;
+}
+.correction-bonne .note-trait circle { stroke: var(--acquis); }
+.correction-fausse .note-trait path { stroke: var(--erreur); }
+.note-trait path + path { animation-delay: 0.18s; }
+@keyframes trace { to { stroke-dashoffset: 0; } }
+
+.correction-details {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.5rem;
+  margin: 1.25rem 0; text-align: left;
+}
+.correction-details div { padding: 0.55rem 0.8rem; border-radius: var(--rayon); background: var(--papier); }
+.correction-details dt { font-size: 0.75rem; color: var(--encre-3); }
+.correction-details dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.correction-details dd[lang="ja"] { font-size: 1.25rem; font-weight: 600; }
+
+.bilan { display: grid; justify-items: center; gap: 0.5rem; }
+.bilan h1 { font-size: 1.5rem; }
+.bilan-score { display: flex; align-items: baseline; gap: 0.5rem; margin-top: 0.75rem; font-family: var(--police-main); }
+.bilan-nombre { font-size: 4.5rem; font-weight: 600; line-height: 1; }
+.bilan-sur { font-size: 1.3rem; color: var(--encre-2); }
+.bilan h2 { margin-top: 1.5rem; font-size: 1rem; }
+.bilan-parfait { margin-top: 1rem; color: var(--acquis-texte); font-weight: 500; }
+.bilan-erreurs { width: 100%; max-width: 28rem; margin: 0.25rem 0 0; padding: 0; list-style: none; text-align: left; }
+.bilan-erreurs li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px dashed var(--trait-fort); }
+.bilan-jp { display: grid; }
+.bilan-fr { color: var(--encre-2); text-align: right; }
+.bilan .actions { justify-content: center; margin-top: 1.5rem; }
+
+/* Écriture */
+.modele { margin: 0.5rem 0 1.25rem; transition: opacity 0.2s; }
+.modele-cache { opacity: 0; cursor: pointer; }
+.essais { display: flex; justify-content: center; }
+.message-ecriture { min-height: 1.5rem; margin-top: 1rem; font-weight: 500; }
+.message-bon { color: var(--acquis-texte); }
+.message-faux { color: var(--erreur); }
+
+/* ---------- Paires (glisser un mot sur son autre écriture) ------------ */
+/* 3 rangées de 6 au bureau, 6 rangées de 3 au téléphone : toujours 18 tuiles. */
+
+.grille-paires {
+  display: grid; gap: 0.6rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  max-width: 52rem; margin: 0 auto;
+}
+@media (max-width: 760px) { .grille-paires { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; } }
+.tuile-paire {
+  position: relative;
+  display: grid; place-items: center;
+  min-height: 4.25rem; padding: 0.5rem 0.4rem;
+  border: 1px solid var(--trait-fort); border-radius: var(--rayon);
+  background: var(--feuille); color: var(--encre);
+  font-size: 0.95rem; font-weight: 500; line-height: 1.25; text-align: center;
+  overflow-wrap: break-word; hyphens: auto;
+  /* Le doigt glisse la tuile au lieu de faire défiler la page. */
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  cursor: grab;
+  box-shadow: 0 2px 0 var(--trait);
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s, opacity 0.3s;
+}
+.tuile-paire[lang="ja"] { font-size: 1.35rem; font-weight: 600; line-break: strict; }
+.tuile-paire.tuile-longue[lang="ja"] { font-size: 1.05rem; }
+.exercice.paires { max-width: 58rem; }
+.tuile-paire:hover:not(:disabled) { border-color: var(--ai); }
+.tuile-choisie { border-color: var(--ai); background: var(--ai-pale); box-shadow: 0 0 0 2px var(--ai); }
+/* Pendant le glisser : la tuile suit le doigt, au-dessus des autres, sans transition. */
+.tuile-en-main {
+  z-index: 5; cursor: grabbing; transition: none;
+  border-color: var(--ai); box-shadow: 4px 6px 0 var(--ai-pale), 4px 6px 0 1px var(--ai);
+}
+.tuile-survolee { border-color: var(--ai); border-style: dashed; background: var(--ai-pale); }
+.tuile-fausse { border-color: var(--erreur); background: var(--erreur-pale); animation: secousse 0.3s; }
+.tuile-trouvee {
+  border-color: var(--acquis); background: var(--acquis-pale); color: var(--acquis-texte);
+  box-shadow: none; cursor: default;
+  animation: paireTrouvee 0.5s ease-out forwards;
+}
+.tuile-trouvee::after {
+  content: "○"; position: absolute; top: 0.2rem; right: 0.35rem;
+  font-size: 0.8rem; color: var(--acquis);
+}
+.tuile-paire:disabled { cursor: default; }
+@keyframes paireTrouvee { 0% { transform: scale(1.05); } 100% { transform: none; opacity: 0.45; } }
+
+/* La carte « Paires » de l'accueil : quatre mini-tuiles. */
+.mini-tuile {
+  display: inline-grid; place-items: center; min-width: 1.9rem; height: 1.9rem; padding: 0 0.35rem;
+  border: 1px solid var(--trait-fort); border-radius: 4px; background: var(--feuille);
+  font-size: 0.75rem; font-weight: 600; color: var(--encre-2);
+}
+.mini-tuile[lang="ja"] { font-size: 0.9rem; }
+.mini-tuile:nth-child(2) { border-color: var(--acquis); background: var(--acquis-pale); color: var(--acquis-texte); }
+.mini-tuile:nth-child(1) { border-color: var(--acquis); background: var(--acquis-pale); color: var(--acquis-texte); }
+
+/* ---------- Clavier de kana ------------------------------------------- */
+
+.clavier {
+  max-width: 27rem; margin: 1rem auto 0; padding: 0.6rem;
+  border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--papier);
+  container-type: inline-size;
+}
+/* Pendant un exercice, le clavier prend toute la largeur de la feuille, et la
+   feuille s'élargit tant qu'il est ouvert (:has, sinon elle reste étroite). */
+.feuille-exercice .clavier { max-width: none; }
+.exercice:not(.exercice-session):has(.clavier:not([hidden])) { max-width: 60rem; }
+.clavier-onglets { display: flex; gap: 0.3rem; margin-bottom: 0.5rem; }
+.clavier-onglets button {
+  flex: 1; padding: 0.4rem; border: 1px solid transparent; border-radius: 4px;
+  background: transparent; font-family: var(--police-main); font-size: 0.95rem; color: var(--encre-2);
+}
+.clavier-onglets button[aria-selected="true"] { background: var(--feuille); border-color: var(--trait-fort); color: var(--encre); }
+.clavier-onglets .clavier-effacer { flex: 0 0 3rem; display: grid; place-items: center; background: var(--feuille); border-color: var(--trait-fort); }
+.clavier-grille { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
+.clavier-colonne { display: grid; gap: 0.3rem; align-content: start; }
+.clavier-rangee { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.3rem; }
+/* Assez large : deux colonnes — la 1re moitié des familles à gauche (あ, か,
+   さ… les unes SOUS les autres), la 2de à droite —, séparées d'un filet. */
+@container (min-width: 34rem) {
+  .clavier-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.4rem; }
+  .clavier-colonne + .clavier-colonne { position: relative; }
+  .clavier-colonne + .clavier-colonne::before {
+    content: ""; position: absolute; top: 0.2rem; bottom: 0.2rem; left: -0.7rem;
+    border-left: 1px dashed var(--trait-fort);
+  }
+}
+.clavier-voises { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--trait-fort); }
+.touche {
+  height: 2.6rem; padding: 0;
+  border: 1px solid var(--trait); border-radius: 4px;
+  background: var(--feuille); font-size: 1.25rem; color: var(--encre);
+}
+.touche:hover { background: var(--ai-pale); border-color: var(--ai); }
+.touche:active { transform: translateY(1px); }
+.touche-vide { visibility: hidden; }
+@media (pointer: coarse) { .touche { height: 2.9rem; } }
+
+/* ---------- Tableaux --------------------------------------------------- */
+
+.outils-liste { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1rem; margin-bottom: 1rem; }
+.outils-liste .champ-en-ligne select { min-width: 12rem; }
+.reglages-ecriture { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1.25rem; }
+.reglages-ecriture input[type="number"] { width: 5rem; }
+.reglages-ecriture .interrupteur { height: 2.75rem; }
+
+.barre-selection {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem; padding: 0.55rem 0.6rem 0.55rem 0.9rem;
+  border-radius: var(--rayon); background: var(--ai-pale);
+}
+.barre-selection > span { font-weight: 500; font-size: 0.92rem; margin-right: auto; }
+
+.tableau-mots { width: 100%; border-collapse: collapse; }
+.tableau-mots th {
+  padding: 0.6rem 0.75rem; text-align: left;
+  font-size: 0.78rem; font-weight: 500; color: var(--encre-3);
+  border-bottom: 1px solid var(--trait-fort);
+}
+.tableau-mots td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--trait); vertical-align: middle; }
+.tableau-mots tbody tr:hover { background: var(--papier); }
+.col-case { width: 2.5rem; }
+.col-actions { width: 1%; white-space: nowrap; text-align: right; }
+.col-fr { font-weight: 500; }
+.contexte { display: block; margin-top: 0.1rem; font-size: 0.8rem; font-weight: 400; color: var(--encre-3); }
+.jp-principal { display: block; font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
+.jp-lecture { display: block; font-size: 0.88rem; color: var(--encre-2); }
+.jp-romaji { display: block; font-size: 0.78rem; color: var(--encre-3); }
+.col-themes, .col-chapitres { max-width: 14rem; }
+.vide { padding: 2.5rem 1rem; text-align: center; color: var(--encre-2); }
+.suite { display: flex; justify-content: center; padding-top: 1.25rem; }
+
+@media (max-width: 760px) {
+  .tableau-mots thead { display: none; }
+  .tableau-mots tr {
+    display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto;
+    grid-template-areas: "case jp etat" "case fr actions";
+    align-items: center; gap: 0.15rem 0.6rem;
+    padding: 0.75rem 0; border-bottom: 1px solid var(--trait);
+  }
+  .tableau-mots td { padding: 0; border: 0; }
+  .tableau-mots .col-case { grid-area: case; align-self: start; padding-top: 0.4rem; }
+  .tableau-mots .col-jp { grid-area: jp; }
+  .tableau-mots .col-fr { grid-area: fr; }
+  .tableau-mots .col-etat { grid-area: etat; justify-self: end; }
+  .tableau-mots .col-actions { grid-area: actions; width: auto; }
+  .tableau-lexique tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "jp actions" "fr fr" "themes themes" "chapitres chapitres";
+  }
+  .tableau-lexique .col-themes { grid-area: themes; max-width: none; padding-top: 0.35rem; }
+  .tableau-lexique .col-chapitres { grid-area: chapitres; max-width: none; }
+  .tableau-lexique .col-actions { align-self: start; }
+}
+
+/* ---------- Chapitres : le gestionnaire (23/10/2026) ----------------- */
+/* Au bureau : la liste à gauche, le chapitre à droite. Au téléphone : la
+   liste devient un ruban de vignettes qui défile en largeur, au-dessus. */
+
+.gestion-grille { display: grid; gap: 1.25rem; align-items: start; }
+@media (min-width: 960px) {
+  .gestion-grille { grid-template-columns: 17rem minmax(0, 1fr); gap: 1.75rem; }
+  .liste-chapitres { position: sticky; top: calc(var(--haut-entete) + 1rem); max-height: calc(100vh - var(--haut-entete) - 2rem); overflow-y: auto; padding-right: 0.25rem; }
+}
+.groupe-liste + .groupe-liste { margin-top: 1.25rem; }
+.groupe-liste h2 { margin: 0 0 0.45rem; font-size: 0.82rem; font-weight: 500; color: var(--encre-3); }
+.groupe-note { font-weight: 400; }
+.item-chapitre {
+  display: grid; gap: 0.35rem; width: 100%; margin-bottom: 0.3rem;
+  padding: 0.55rem 0.7rem 0.6rem;
+  border: 1px solid transparent; border-radius: var(--rayon);
+  background: transparent; text-align: left; color: var(--encre-2);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.item-chapitre:hover { background: var(--feuille); border-color: var(--trait-fort); }
+.item-chapitre[aria-current="true"] { background: var(--feuille); border-color: var(--ai); box-shadow: inset 3px 0 0 var(--ai); color: var(--encre); }
+.item-ligne { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.item-nom { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 500; font-size: 0.92rem; }
+.item-nom .icone { width: 0.85rem; height: 0.85rem; color: var(--encre-3); }
+.item-nb { font-size: 0.78rem; color: var(--encre-3); font-variant-numeric: tabular-nums; }
+.item-chapitre .barre-statuts { opacity: 0.7; }
+@media (max-width: 959px) {
+  .liste-chapitres { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.4rem; scroll-snap-type: x proximity; }
+  .groupe-liste { display: flex; gap: 0.4rem; align-items: stretch; flex: none; }
+  .groupe-liste + .groupe-liste { margin-top: 0; padding-left: 1rem; border-left: 1px dashed var(--trait-fort); }
+  .groupe-liste h2 { display: none; }
+  .item-chapitre { width: 9.5rem; flex: none; margin: 0; border-color: var(--trait-fort); background: var(--feuille); scroll-snap-align: start; }
+}
+
+.detail-chapitre { min-width: 0; }
+.detail-tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.detail-titre { min-width: 0; flex: 1 1 16rem; }
+.detail-sur { font-size: 0.82rem; color: var(--encre-3); }
+.detail-titre h2 { margin: 0.1rem 0 0.2rem; font-size: 1.6rem; letter-spacing: -0.01em; }
+.detail-compte { font-size: 0.9rem; color: var(--encre-2); }
+.detail-barre { max-width: 22rem; margin-top: 0.5rem; }
+.detail-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+.bloc-ajout {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+  margin: 1.25rem 0 0.5rem; padding: 0.9rem 1rem;
+  border: 1px dashed var(--trait-fort); border-radius: var(--rayon); background: var(--papier);
+}
+.bloc-ajout-aide { font-size: 0.88rem; color: var(--encre-2); }
+.outils-chapitre { margin: 1rem 0 0.75rem; }
+.barre-lot {
+  position: sticky; top: calc(var(--haut-entete) + 0.5rem); z-index: 3;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem; padding: 0.55rem 0.7rem;
+  border-radius: var(--rayon); background: var(--ai-pale);
+  animation: apparitionDouce 0.18s ease-out backwards;
+}
+.barre-lot-nb { font-size: 0.9rem; margin-right: auto; }
+.barre-lot-vers { display: inline-flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.barre-lot-vers select { height: 2.1rem; width: auto; min-width: 10rem; font-size: 0.88rem; }
+.tableau-chapitre .col-case { width: 2.5rem; }
+.tableau-chapitre .col-etat { width: 1%; white-space: nowrap; }
+.verrou { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; color: var(--encre-3); }
+.verrou .icone { width: 1rem; height: 1rem; }
+.note-chapitre { margin-top: 1rem; padding: 0.7rem 0.9rem; border-radius: var(--rayon); background: var(--papier); font-size: 0.86rem; color: var(--encre-2); }
+.etat-vide { padding: 2rem 1rem 1rem; text-align: center; color: var(--encre-2); display: grid; gap: 0.35rem; }
+.etat-vide p:first-child { font-weight: 700; color: var(--encre); }
+
+/* Le dialogue « Ajouter des mots » */
+.formulaire-ajout { display: grid; gap: 0.9rem; }
+.formulaire-ajout .champ-recherche-petit { margin: 0; }
+.ajout-tete { display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 0.9rem; }
+.ajout-tout { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; cursor: pointer; }
+.ajout-compte { color: var(--encre-2); font-variant-numeric: tabular-nums; }
+.liste-ajout {
+  margin: 0; padding: 0; list-style: none;
+  max-height: min(22rem, 45vh); overflow-y: auto;
+  border: 1px solid var(--trait); border-radius: var(--rayon);
+}
+.liste-ajout li + li { border-top: 1px solid var(--trait); }
+.liste-ajout label { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; cursor: pointer; }
+.liste-ajout label:hover { background: var(--papier); }
+.ajout-fr { font-weight: 500; }
+.ajout-jp .jp-principal { font-size: 1.05rem; }
+.ajout-jp .jp-lecture { font-size: 0.78rem; }
+.ajout-note { font-size: 0.75rem; color: var(--encre-3); }
+.ajout-deja { opacity: 0.6; }
+.ajout-deja label { cursor: default; }
+
+.titre-peupler { margin-top: 1.5rem; font-size: 1rem; }
+.groupe-peupler h4 { margin: 0.9rem 0 0.45rem; font-size: 0.8rem; font-weight: 500; color: var(--encre-3); }
+.compte-peupler { margin-top: 1rem; padding: 0.6rem 0.8rem; border-radius: var(--rayon); background: var(--papier); font-size: 0.9rem; font-weight: 500; }
+
+/* ---------- « Mes mots » verrouillé (formulaire, import) ------------- */
+
+.aide-champ { display: block; margin-bottom: 0.45rem; font-size: 0.82rem; color: var(--encre-3); }
+.puce-verrouillee {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  cursor: default; opacity: 1;
+}
+.puce-verrouillee .icone { width: 0.8rem; height: 0.8rem; }
+.puce-verrouillee:hover { border-color: var(--ai); color: var(--sur-ai); }
+
+/* ---------- Importer des mots (23/10/2026) ----------------------------- */
+/* Trois feuilles numérotées : le contenu EST une suite d'étapes. */
+
+.importer { max-width: 56rem; margin: 0 auto; }
+.lien-retour { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; color: var(--encre-2); text-decoration: none; font-size: 0.92rem; }
+.lien-retour:hover { color: var(--ai); }
+.etapes-import { display: grid; gap: 1.1rem; margin: 0; padding: 0; list-style: none; }
+.etape h2 { display: flex; align-items: center; gap: 0.7rem; font-size: 1.2rem; margin-bottom: 0.5rem; }
+.etape-numero {
+  display: inline-grid; place-items: center; flex: none;
+  width: 2.1rem; height: 2.1rem;
+  border: 2px solid var(--quadrillage); background: var(--feuille);
+  font-family: var(--police-main); font-size: 1.15rem; font-weight: 600; color: var(--ai);
+}
+.etape-aide { color: var(--encre-2); font-size: 0.93rem; max-width: 62ch; margin-bottom: 0.9rem; }
+.grille-prompt { margin-bottom: 1rem; }
+.prompt-ia { display: grid; gap: 0.75rem; justify-items: start; }
+.prompt-texte {
+  width: 100%; max-height: 17rem; overflow: auto; margin: 0;
+  padding: 0.9rem 1rem; border: 1px solid var(--trait); border-radius: var(--rayon);
+  background: var(--papier); color: var(--encre-2);
+  font: 0.8rem/1.55 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.prompt-texte mark { background: var(--ai-pale); color: var(--ai-fonce); border-radius: 3px; padding: 0 0.15rem; font-weight: 600; }
+.prompt-texte mark.a-remplir { background: var(--revoir-pale); color: var(--revoir-texte); }
+.format-import { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px dashed var(--trait-fort); font-size: 0.92rem; }
+.format-import summary { cursor: pointer; font-weight: 500; color: var(--ai); }
+.format-import > p { margin: 0.7rem 0; color: var(--encre-2); }
+.tableau-format { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.tableau-format th, .tableau-format td { padding: 0.4rem 0.5rem; text-align: left; border-bottom: 1px solid var(--trait); vertical-align: top; }
+.tableau-format th { font-weight: 500; color: var(--encre-3); font-size: 0.78rem; }
+.tableau-format td:last-child { color: var(--encre-3); white-space: nowrap; }
+.champ-json {
+  width: 100%; min-height: 9rem; padding: 0.75rem 0.85rem; resize: vertical;
+  border: 1px solid var(--trait-fort); border-radius: var(--rayon); background: var(--feuille); color: var(--encre);
+  font: 0.85rem/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.champ-json:focus { outline: none; border-color: var(--ai); box-shadow: 0 0 0 3px var(--ai-pale); }
+.actions-gauche { margin-top: 0.75rem; }
+.verdict { display: grid; gap: 0.5rem; margin-top: 0.9rem; }
+.verdict:empty { display: none; }
+.verdict-ligne { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.93rem; }
+.verdict-ligne .icone { align-self: center; }
+.verdict-ok .icone { color: var(--acquis); }
+.verdict-erreur { color: var(--erreur); }
+.verdict-detail { font-size: 0.86rem; }
+.verdict-detail summary { cursor: pointer; font-weight: 500; }
+.verdict-ignores summary { color: var(--erreur); }
+.verdict-avertis summary { color: var(--revoir-texte); }
+.verdict-detail ul { margin: 0.35rem 0 0; padding-left: 1.25rem; color: var(--encre-2); }
+.tableau-apercu { width: 100%; border-collapse: collapse; margin-top: 0.4rem; font-size: 0.9rem; }
+.tableau-apercu caption { text-align: left; font-size: 0.78rem; font-weight: 500; color: var(--encre-3); padding-bottom: 0.3rem; }
+.tableau-apercu th { text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--encre-3); padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--trait-fort); }
+.tableau-apercu td { padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--trait); vertical-align: middle; }
+.tableau-apercu .jp-principal { font-size: 1.1rem; }
+.apercu-suite { font-size: 0.85rem; color: var(--encre-3); }
+@media (max-width: 560px) {
+  .tableau-apercu th:nth-child(3), .tableau-apercu td:nth-child(3),
+  .tableau-apercu th:nth-child(4), .tableau-apercu td:nth-child(4) { display: none; }
+}
+.champ-nouveau-import { max-width: 24rem; margin-top: 1rem; }
+.etape .segments { margin-bottom: 0.9rem; max-width: 30rem; }
+.resultat-import { margin-top: 1.1rem; padding: 0.9rem 1rem; border-radius: var(--rayon); background: var(--acquis-pale); }
+.resultat-import .actions { margin-top: 0.6rem; }
+
+/* ---------- Sauvegarde complète (menu du compte, administrateur) ------ */
+/* Ancien écran « Données », supprimé le 23/10 : tout est en base. */
+
+.sauvegarde { display: grid; gap: 0.9rem; }
+.discret { color: var(--encre-3); }
+.sauvegarde .discret { font-size: 0.85rem; }
+.etat-serveur { font-size: 0.8rem; color: var(--encre-3); }
+
+/* « Dans l'autre sens » : exporter, en bas de la page d'import. */
+.export-mots { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.export-mots p { flex: 1 1 20rem; color: var(--encre-2); font-size: 0.92rem; }
+
+/* ---------- Boîtes de dialogue ----------------------------------------- */
+
+.dialogue {
+  width: min(32rem, calc(100vw - 1.5rem)); max-height: calc(100dvh - 1.5rem);
+  padding: 0; border: 1px solid var(--trait); border-radius: 8px;
+  background: var(--feuille); color: var(--encre);
+  box-shadow: 0 18px 50px rgba(15, 25, 22, 0.28);
+}
+.dialogue-large { width: min(46rem, calc(100vw - 1.5rem)); }
+.dialogue::backdrop { background: rgba(16, 24, 32, 0.45); }
+.dialogue[open] { animation: ouverture 0.18s ease-out; }
+@keyframes ouverture { from { opacity: 0; transform: translateY(8px); } }
+.dialogue-cadre { display: flex; flex-direction: column; max-height: calc(100dvh - 1.5rem); }
+.dialogue-tete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1rem 0.5rem 1.4rem; }
+.dialogue-tete h2 { font-size: 1.15rem; }
+.dialogue-corps { padding: 0.5rem 1.4rem 1.25rem; overflow-y: auto; }
+.dialogue-texte { color: var(--encre-2); line-height: 1.6; }
+.dialogue-texte strong { color: var(--encre); }
+.dialogue-pied { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; padding: 0.85rem 1.4rem; border-top: 1px solid var(--trait); background: var(--papier); border-radius: 0 0 8px 8px; }
+
+.grille-formulaire { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem 1rem; }
+.champ-plein { grid-column: 1 / -1; }
+.champ-plein:empty { display: none; }
+.champ-plein .clavier { margin: 0 auto; }
+@media (max-width: 560px) { .grille-formulaire { grid-template-columns: 1fr; } }
+.aide-formulaire { margin-bottom: 1rem; font-size: 0.85rem; color: var(--encre-2); }
+.aide-formulaire kbd { padding: 0.05rem 0.35rem; border: 1px solid var(--trait-fort); border-radius: 3px; background: var(--papier); }
+.champ-nouveau-chapitre { margin-top: 0.5rem; max-width: 24rem; }
+.champ-nouveau-chapitre input { height: 2.1rem; }
+
+/* ---------- Messages ---------------------------------------------------- */
+
+#toasts {
+  position: fixed; left: 50%; bottom: 1.25rem; z-index: 50;
+  display: grid; gap: 0.5rem; justify-items: center;
+  transform: translateX(-50%); width: min(32rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  padding: 0.75rem 1rem; border-radius: var(--rayon);
+  background: var(--encre); color: var(--papier);
+  font-size: 0.92rem; line-height: 1.45;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  pointer-events: auto; cursor: pointer;
+  animation: arrivee 0.2s ease-out;
+}
+.toast .icone { margin-top: 0.1rem; }
+.toast-succes .icone { color: var(--acquis); }
+.toast-erreur { background: var(--erreur); color: #fff; }
+.toast-erreur .icone { color: #fff; }
+.toast-sortie { opacity: 0; transform: translateY(6px); transition: opacity 0.2s, transform 0.2s; }
+@keyframes arrivee { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- Compte : connexion et menu --------------------------------- */
+
+.zone-compte { display: flex; align-items: center; }
+.zone-compte:empty { display: none; }
+.menu-compte { position: relative; }
+.menu-compte summary { list-style: none; cursor: pointer; border-radius: 50%; }
+.menu-compte summary::-webkit-details-marker { display: none; }
+.menu-compte summary:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+.avatar {
+  display: inline-grid; place-items: center; flex: none;
+  width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  background: var(--ai-pale); color: var(--ai-fonce);
+  font-weight: 700; font-size: 0.95rem; object-fit: cover;
+  border: 1px solid var(--trait-fort);
+}
+.menu-compte-panneau {
+  position: absolute; right: 0; top: calc(100% + 0.5rem); z-index: 40;
+  display: grid; gap: 0.4rem; justify-items: start;
+  /* minmax(0, 1fr) : sans lui, un bouton « nowrap » élargit la colonne et le
+     menu déborde de l'écran du téléphone. */
+  grid-template-columns: minmax(0, 1fr);
+  width: min(17rem, calc(100vw - 2rem)); padding: 1rem;
+  background: var(--feuille); border: 1px solid var(--trait); border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(15, 25, 22, 0.18);
+}
+.menu-compte-email { font-size: 0.85rem; color: var(--encre-2); overflow-wrap: anywhere; }
+.menu-compte-panneau .bouton { margin-top: 0.5rem; }
+.menu-compte-panneau .menu-compte-lien { justify-content: flex-start; margin-top: 0.15rem; padding-left: 0.6rem; white-space: normal; text-align: left; }
+.menu-compte-panneau .menu-compte-lien + .bouton-secondaire { margin-top: 0.6rem; }
+
+body[data-vue="connexion"] .navigation { display: none; }
+body[data-vue="connexion"] .bascule-theme { margin-left: auto; }
+.connexion { display: grid; place-items: center; min-height: calc(100vh - var(--haut-entete) - 8rem); }
+.feuille-connexion {
+  width: min(28rem, 100%); padding: 2.25rem 1.75rem 2rem;
+  display: grid; justify-items: center; gap: 0.9rem; text-align: center;
+  box-shadow: 5px 5px 0 -1px var(--feuille), 5px 5px 0 0 var(--trait);
+}
+.feuille-connexion h1 { font-size: 1.75rem; }
+.connexion-cases .masu { --t: 4rem; }
+.connexion-message { padding: 0.55rem 0.8rem; border-radius: var(--rayon); background: var(--revoir-pale); color: var(--revoir-texte); font-size: 0.9rem; }
+.connexion-note { font-size: 0.85rem; color: var(--encre-3); }
+.connexion-dev { display: grid; gap: 0.75rem; width: 100%; text-align: left; }
+/* Deux groupes, comme Odyvresse : « Se connecter », « Créer un compte ». */
+.connexion-groupe { display: grid; gap: 0.6rem; width: 100%; }
+.connexion-groupe h2 { font-size: 1rem; }
+.connexion-boutons { display: grid; gap: 0.5rem; width: 100%; }
+.connexion-boutons-ligne { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+/* Le libellé passe à la ligne sur un petit écran plutôt que de déborder. */
+.bouton-fournisseur { white-space: normal; text-align: center; }
+.connexion-ou {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%;
+  color: var(--encre-3); font-size: 0.8rem;
+}
+.connexion-ou::before, .connexion-ou::after { content: ""; flex: 1; border-top: 1px dashed var(--trait-fort); }
+.badge-admin { background: var(--ai-pale); color: var(--ai-fonce); }
+.badge-fournisseur { background: var(--papier-2); color: var(--encre-2); }
+.avatar-grand { flex: none; width: 4.5rem; height: 4.5rem; font-size: 1.8rem; }
+.avatar-grand .icone { width: 2rem; height: 2rem; }
+
+/* ---------- Mon compte, Gérer les comptes ------------------------------- */
+
+.page-compte { display: grid; gap: 1rem; max-width: 46rem; }
+.page-compte .entete-vue { margin-bottom: 0.75rem; }
+.carte-profil { display: grid; gap: 1.25rem; }
+.profil-identite { display: flex; align-items: center; gap: 1rem; min-width: 0; }
+.profil-texte { display: grid; gap: 0.3rem; min-width: 0; }
+.profil-nom { font-size: 1.5rem; overflow-wrap: anywhere; }
+.profil-email { color: var(--encre-2); font-size: 0.9rem; overflow-wrap: anywhere; }
+.profil-puces { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.profil-chiffres {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.5rem; margin: 0;
+}
+.profil-chiffres div {
+  display: flex; flex-direction: column-reverse; gap: 0.1rem;
+  padding: 0.65rem 0.75rem; border-radius: var(--rayon); background: var(--papier);
+  border: 1px solid var(--trait);
+}
+.profil-chiffres dd { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--encre); }
+.profil-chiffres dt { font-size: 0.78rem; color: var(--encre-2); line-height: 1.3; }
+@media (max-width: 560px) {
+  .profil-chiffres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profil-chiffres div:last-child:nth-child(odd) { grid-column: 1 / -1; } /* le 5e chiffre : toute la ligne */
+}
+.profil-depuis { font-size: 0.82rem; }
+.section-compte { display: grid; gap: 0.75rem; }
+.section-compte h2 { font-size: 1.1rem; }
+.form-pseudo { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem; }
+.form-pseudo .champ { flex: 1 1 16rem; }
+.profil-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.profil-actions .bouton { white-space: normal; }
+.zone-danger { border-color: var(--erreur-pale); }
+
+.page-comptes { max-width: 60rem; }
+.page-comptes [data-resume] { margin: -0.75rem 0 1rem; font-size: 0.9rem; }
+.liste-comptes { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.ligne-compte {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.5rem 1rem;
+  padding: 0.9rem 1rem;
+}
+@media (min-width: 760px) { .ligne-compte { padding: 0.9rem 1.25rem; } }
+.ligne-compte-moi { border-color: var(--ai); }
+.ligne-compte-nom { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+.ligne-compte-email, .ligne-compte-infos { font-size: 0.85rem; overflow-wrap: anywhere; }
+.ligne-compte-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.35rem; }
+@media (max-width: 560px) {
+  .ligne-compte { grid-template-columns: auto minmax(0, 1fr); }
+  .ligne-compte-actions { grid-column: 1 / -1; justify-content: flex-start; }
+}
+
+.mot-du-cours { font-size: 0.75rem; color: var(--encre-3); padding-right: 0.5rem; }
+
+/* ---------- Kana : tableaux --------------------------------------------- */
+
+.barre-kana { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1.5rem; margin-bottom: 1.25rem; }
+.legende-kana { margin: 0 0 0.55rem; }
+.bilan-kana { margin: 0 0 0.6rem auto; font-size: 0.9rem; color: var(--encre-2); }
+.groupes-kana { display: grid; gap: 1rem; }
+@media (min-width: 1100px) { .groupes-kana { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } .groupes-kana > :first-child { grid-row: span 2; } }
+.groupe-kana h2 { font-size: 1.05rem; }
+.note-kana { margin: 0.3rem 0 1rem; font-size: 0.88rem; color: var(--encre-2); max-width: 60ch; }
+
+.tableau-kana { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.tableau-kana th { font-size: 0.8rem; font-weight: 500; color: var(--encre-3); padding: 0.3rem; }
+.tableau-kana thead th:first-child, .tableau-kana tbody th { width: 2.6rem; }
+.tableau-kana td { padding: 0; border: 1px solid var(--trait); text-align: center; }
+.tableau-kana td.case-vide {
+  background-image: repeating-linear-gradient(135deg, transparent 0 6px, var(--trait) 6px 7px);
+}
+.ligne-kana {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  padding: 0.3rem 0.35rem; border: 1px solid transparent; border-radius: var(--rayon);
+  background: none; color: var(--encre-2); font-size: 0.85rem; font-weight: 700;
+}
+.ligne-kana .icone { width: 0.7rem; height: 0.7rem; opacity: 0; transition: opacity 0.15s; }
+.ligne-kana:hover { border-color: var(--ai); color: var(--ai); }
+.ligne-kana:hover .icone, .ligne-kana:focus-visible .icone { opacity: 1; }
+.case-kana { display: grid; justify-items: center; gap: 0.1rem; padding: 0.45rem 0.2rem 0.4rem; }
+.glyphes { display: inline-flex; gap: 0.35rem; }
+.glyphe {
+  font-size: 1.9rem; font-weight: 600; line-height: 1.15;
+  padding-bottom: 0.15rem; border-bottom: 3px solid transparent;
+}
+.tableau-kana-3 .glyphe { font-size: 1.7rem; }
+.tableau-kana-deux .glyphe { font-size: 1.45rem; }
+.glyphe.etat-acquis { border-bottom-color: var(--acquis); }
+.glyphe.etat-a-revoir { border-bottom-color: var(--revoir); }
+.romaji { font-size: 0.8rem; color: var(--encre-3); letter-spacing: 0.02em; }
+@media (max-width: 560px) {
+  .glyphe { font-size: 1.55rem; }
+  .tableau-kana-deux .glyphe { font-size: 1.1rem; }
+  .glyphes { gap: 0.15rem; }
+  .tableau-kana thead th:first-child, .tableau-kana tbody th { width: 2.2rem; }
+}
+
+/* ---------- Kana : le jeu ------------------------------------------------ */
+
+.reglages-jeu { display: grid; gap: 1.5rem; }
+.choix-lignes { display: grid; gap: 1.25rem; }
+.groupe-lignes .categorie-tete h2 { font-size: 0.95rem; }
+.puce-ligne { font-size: 1.05rem; padding: 0.3rem 0.7rem; }
+.lancer-jeu { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.lancer-jeu .compte-peupler { margin: 0; flex: 1 1 14rem; }
+.question-kana .masu { --t: clamp(5.5rem, 30vw, 8rem); }
+.aide-kana { min-height: 1.6rem; margin-top: 0.25rem; }
+.aide-kana strong { color: var(--encre); font-size: 1.1rem; }
+.kana-trouve { color: var(--acquis-texte); font-weight: 700; }
+.masu.masu-trouve { background-color: var(--acquis-pale); border-color: var(--acquis); transition: background-color 0.2s; }
+.jeu-kana .champ-reponse { font-family: var(--police-ui); letter-spacing: 0.04em; }
+.kana-rates { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.5rem; width: 100%; max-width: 32rem; margin: 0.5rem 0 0; padding: 0; list-style: none; }
+.kana-rates li { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "g r" "g n"; align-items: center; gap: 0 0.6rem; padding: 0.5rem 0.7rem; border-radius: var(--rayon); background: var(--papier); text-align: left; }
+.kana-rate-glyphe { grid-area: g; font-size: 1.9rem; font-weight: 600; }
+.kana-rate-romaji { grid-area: r; font-weight: 500; }
+.kana-rate-nb { grid-area: n; font-size: 0.78rem; color: var(--erreur); }
+
+/* ---------- Kanji : la page et le jeu (26/10) ------------------------- */
+
+.groupe-kanji-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; margin-bottom: 1rem; }
+.groupe-kanji-tete .note-kana { flex: 1 1 18rem; margin: 0; }
+.groupe-kanji-tete .bilan-kana { margin: 0; }
+.grille-kanji { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); gap: 0.45rem; }
+.case-kanji {
+  display: grid; justify-items: center; gap: 0.1rem; min-width: 0;
+  padding: 0.5rem 0.25rem 0.4rem; border: 1px solid var(--trait); border-radius: var(--rayon);
+  background: var(--feuille); color: var(--encre); cursor: pointer;
+  border-bottom: 4px solid var(--trait);
+  transition: border-color 0.15s, transform 0.15s;
+}
+.case-kanji:hover { border-color: var(--ai); }
+.case-kanji:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+.case-kanji-glyphe { font-size: 1.85rem; font-weight: 600; line-height: 1.15; }
+.case-kanji-sens { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.72rem; color: var(--encre-3); }
+/* L'état se lit au trait du bas ET au titre (pas à la couleur seule : le
+   titre de la case le dit en clair). */
+.case-kanji.etat-acquis { border-bottom-color: var(--acquis); background: var(--acquis-pale); }
+.case-kanji.etat-en-cours { border-bottom-color: var(--encours); }
+.case-kanji.etat-a-revoir { border-bottom-color: var(--revoir); }
+.source-kanji { margin: 1rem 0 0; font-size: 0.75rem; color: var(--encre-3); }
+.okurigana { color: var(--encre-3); font-weight: 400; }
+.okurigana::before { content: "·"; margin: 0 0.05em; }
+
+.fiche-kanji-tete { display: flex; gap: 1rem; align-items: center; }
+.fiche-kanji-tete .masu { --t: 5.5rem; flex: none; }
+.fiche-kanji-sens { margin: 0; font-family: var(--police-titre); font-size: 1.25rem; font-weight: 700; }
+.fiche-kanji-infos { margin: 0.3rem 0 0; font-size: 0.85rem; color: var(--encre-2); }
+.fiche-kanji-lectures { display: grid; gap: 0.5rem; margin: 1rem 0 0; }
+.fiche-kanji-lectures div { display: grid; grid-template-columns: 3rem minmax(0, 1fr); align-items: baseline; padding: 0.55rem 0.8rem; border-radius: var(--rayon); background: var(--papier); }
+.fiche-kanji-lectures dt { font-size: 0.78rem; color: var(--encre-3); }
+.fiche-kanji-lectures dd { margin: 0; font-size: 1.15rem; font-weight: 500; overflow-wrap: anywhere; }
+.fiche-kanji h3 { margin: 1.1rem 0 0.5rem; font-size: 0.9rem; }
+.fiche-kanji-mots { display: grid; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.fiche-kanji-mots li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.7rem; }
+.vide-court { color: var(--encre-3); }
+
+.tuiles-kanji { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 22rem; }
+.tuiles-kanji .tuile { font-size: 2rem; }
+.correction-kanji { margin-left: auto; font-size: 2.6rem; font-weight: 600; line-height: 1; color: var(--encre-2); }
+.correction-details .correction-mots { grid-column: 1 / -1; }
+/* Téléphone : les choix de groupe (5) et d'exercice (4) passent à la ligne
+   au lieu de déborder ; le trait entre les cases vient du fond (gap 1px). */
+@media (max-width: 560px) {
+  .page-kanji .segments-rangee, .jeu-kanji .segments-rangee {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(5.6rem, 1fr)); gap: 1px; background: var(--trait);
+  }
+  .page-kanji .segments span, .jeu-kanji .segments span { border-left: 0; background: var(--feuille); padding-inline: 0.4rem; }
+  .page-kanji .segments input:checked + span, .jeu-kanji .segments input:checked + span { background: var(--ai); }
+}
+.correction-mot { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.4rem; margin-right: 0.9rem; }
+.correction-mot .jp-lecture { font-size: 0.8rem; color: var(--encre-3); }
+
+/* ---------- Téléphone : navigation en bas ------------------------------ */
+
+@media (max-width: 760px) {
+  :root { --haut-entete: 3.5rem; }
+  /* ⚠️ backdrop-filter fait de l'en-tête le repère des éléments « fixed » qu'il
+     contient : la navigation se collait EN HAUT de l'écran au lieu d'en bas. */
+  .entete { justify-content: space-between; backdrop-filter: none; background: var(--papier); }
+  .entete { gap: 0.5rem; }
+  .marque { margin-right: auto; }
+  .puce-chapitre { flex: 1 1 6.5rem; max-width: 11rem; min-width: 0; }
+  .puces-chapitres .puce-chapitre { max-width: none; }
+  .navigation {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0;
+    padding: 0.35rem 0.35rem calc(0.35rem + env(safe-area-inset-bottom));
+    background: var(--feuille); border-top: 1px solid var(--trait);
+  }
+  .navigation a { flex-direction: column; gap: 0.15rem; padding: 0.4rem 0.1rem; font-size: 0.7rem; }
+  .navigation .icone { width: 1.35rem; height: 1.35rem; }
+  .vue { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  #toasts { bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  /* Pendant un exercice, la place va à la question et au clavier. */
+  body[data-vue="exercice"] .navigation, body[data-vue="ecriture"] .navigation, body[data-jeu="en-cours"] .navigation { display: none; }
+  body[data-vue="exercice"] .vue, body[data-vue="ecriture"] .vue, body[data-jeu="en-cours"] .vue { padding-bottom: 2rem; }
+  body[data-vue="exercice"] #toasts, body[data-vue="ecriture"] #toasts, body[data-jeu="en-cours"] #toasts { bottom: 1rem; }
+}
+
+/* ---------- Mouvement réduit ------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .note-trait circle, .note-trait path { stroke-dashoffset: 0; }
+}
+
+/* ---------- Habillage de la maquette de Manus (25/10/2026) ---------------
+   Ce qui vaut pour TOUS les écrans : titres en Manrope, surtitres en
+   petites capitales espacées, feuilles aux grands rayons et ombre douce,
+   boutons plus ronds, navigation en pastilles. Les écrans gardent leur
+   structure ; ils prennent l'allure de la maquette par ces règles. */
+
+h1, h2, h3, .marque-nom, .entete-vue h1 { font-family: var(--police-titre); letter-spacing: -0.035em; }
+.entete-vue h1 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); line-height: 1.05; letter-spacing: -0.055em; }
+
+.surtitre {
+  display: block; margin: 0;
+  font-family: var(--police-ui); font-size: 0.69rem; font-weight: 700; line-height: 1.25;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--encre-3);
+}
+.surtitre-clair { color: var(--sur-nuit-2); }
+
+.feuille { border-radius: var(--rayon-carte); box-shadow: var(--ombre-douce); }
+.feuille-connexion, .feuille-exercice, .accueil-tete { box-shadow: var(--ombre); border-radius: var(--rayon-grand); }
+
+.bouton { border-radius: var(--rayon); font-weight: 600; }
+.bouton-principal { box-shadow: 0 8px 18px rgba(88, 100, 216, 0.23); transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s; }
+.bouton-principal:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 11px 22px rgba(88, 100, 216, 0.3); }
+.bouton-texte {
+  display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0;
+  border: 0; background: none; color: var(--encre-2); font-size: 0.82rem; font-weight: 700;
+}
+.bouton-texte:hover { color: var(--ai); }
+.bouton-texte .icone { width: 0.95rem; height: 0.95rem; }
+
+input[type="text"], input[type="search"], input[type="number"], select, textarea { border-radius: var(--rayon); }
+
+.entete { border-bottom-color: var(--trait); }
+.marque-cases span { border-color: var(--quadrillage); font-weight: 500; }
+.marque-nom { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.04em; }
+.navigation a { border-radius: 9px; font-size: 0.86rem; font-weight: 600; transition: color 0.2s, background-color 0.2s, transform 0.2s; }
+.navigation a:hover { background: var(--ai-pale); color: var(--encre); }
+@media (min-width: 761px) { .navigation a:hover { transform: translateY(-1px); } }
+.bascule-theme { border-radius: 50%; border: 1px solid var(--trait); }
+.zone-compte .avatar { background: var(--nuit); color: var(--sur-nuit); border-color: transparent; font-family: var(--police-titre); font-weight: 800; }
+
+.puce-chapitre { border-radius: 12px; }
+.badge { font-weight: 600; }
+.masu { font-family: var(--police-main); font-weight: 400; }
+
+/* ---------- La session d'exercice (maquette de Manus, 25/10/2026) --------
+   Trois colonnes au bureau : la session (titre, progression, pastilles),
+   la question, le compte de la session. La carte centrale : consigne en
+   surtitre, grande question, saisie, réponse dans un bandeau coloré, le
+   récapitulatif en quatre cases, un grand « Suivant », puis le clavier (en
+   dernier, demande de José du 25/10). */
+
+.exercice-session { max-width: none; display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) {
+  .exercice-session { grid-template-columns: 14.5rem minmax(0, 44rem) 15rem; justify-content: center; align-items: start; gap: 2rem; }
+  .session-rail, .session-droite { position: sticky; top: calc(var(--haut-entete) + 1.5rem); }
+}
+.session-rail { display: grid; gap: 1.25rem; align-content: start; }
+.session-quitter { justify-self: start; }
+.session-titre h1 { margin: 0.4rem 0 0.35rem; font-size: 1.65rem; line-height: 1.1; letter-spacing: -0.05em; color: var(--encre); text-align: left; }
+.session-titre p { font-size: 0.84rem; color: var(--encre-2); }
+.session-progres { padding: 1rem 0; border-top: 1px solid var(--trait); border-bottom: 1px solid var(--trait); }
+.session-progres-tete { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--encre-2); }
+.session-progres-tete strong { color: var(--encre); font-variant-numeric: tabular-nums; }
+.session-progres .jauge { height: 6px; margin: 0.6rem 0 0.8rem; border-radius: 3px; }
+.session-progres .jauge i { border-radius: 3px; }
+.session-etapes { display: flex; gap: 0.4rem; flex-wrap: nowrap; }
+.pas {
+  display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  font-size: 0.7rem; font-weight: 700; color: var(--encre-3); font-variant-numeric: tabular-nums;
+}
+.pas .icone { width: 0.8rem; height: 0.8rem; stroke-width: 3; }
+.pas-bon { background: var(--acquis-pale); color: var(--acquis-texte); }
+.pas-faux { background: var(--erreur-pale); color: var(--erreur); }
+.pas-courant { background: var(--ai); color: var(--sur-ai); box-shadow: 0 0 0 3px var(--ai-pale); }
+.pas-suite { width: auto; }
+.session-rail .exercice-score { margin: 0; }
+
+.session-droite { display: grid; gap: 0.9rem; align-content: start; }
+.carte-session {
+  display: grid; gap: 0.75rem; padding: 1.15rem 1.2rem;
+  border: 1px solid var(--trait); border-radius: var(--rayon-carte);
+  background: var(--feuille); box-shadow: var(--ombre-douce);
+}
+.carte-session-douce { background: var(--papier-2); box-shadow: none; }
+.carte-session p { font-size: 0.84rem; color: var(--encre-2); line-height: 1.5; }
+.carte-session kbd { padding: 0.1rem 0.4rem; border: 1px solid var(--trait-fort); border-radius: 5px; background: var(--feuille); font-size: 0.75rem; }
+.chiffre-session { display: flex; align-items: baseline; gap: 0.6rem; }
+.chiffre-session strong { font-family: var(--police-titre); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; min-width: 2.2ch; }
+.chiffre-session span { font-size: 0.84rem; color: var(--encre-2); }
+
+/* Téléphone et tablette : la session sur une ligne, le compte dessous en deux cases. */
+@media (max-width: 1099px) {
+  .session-rail { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.5rem 1rem; }
+  .session-titre { grid-column: 1 / -1; grid-row: 2; }
+  .session-titre h1 { font-size: 1.35rem; }
+  .session-titre h1 br { display: none; }
+  .session-titre p { display: none; }
+  .session-quitter { grid-column: 1; grid-row: 1; }
+  .session-rail .exercice-score { grid-column: 3; grid-row: 1; }
+  .session-progres { grid-column: 1 / -1; grid-row: 3; padding: 0.75rem 0 0.5rem; border-bottom: 0; }
+  .session-etapes { display: none; }
+  .session-droite { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .carte-session-douce { display: none; }
+}
+.session-finie .session-droite { display: none; }
+
+/* La carte de la question. */
+.exercice-session .feuille-exercice { padding: 1.5rem 1.4rem 1.75rem; }
+@media (min-width: 760px) { .exercice-session .feuille-exercice { padding: 1.75rem 2rem 2rem; } }
+.exercice-session .consigne { margin: 1.1rem 0 0.9rem; text-align: center; }
+.exercice-session .question-fr { font-family: var(--police-titre); font-size: clamp(1.9rem, 4.5vw, 2.6rem); letter-spacing: -0.05em; }
+.exercice-session .saisie { max-width: 30rem; }
+.exercice-session .champ-reponse { border-radius: 12px; }
+.exercice-session [data-resultat="bon"] .champ-reponse:disabled { background: var(--acquis-pale); border-color: var(--acquis); color: var(--acquis-texte); }
+.exercice-session [data-resultat="faux"] .champ-reponse:disabled { background: var(--erreur-pale); border-color: var(--erreur); color: var(--erreur); }
+.exercice-session .bouton-clavier { border-radius: 12px; background: var(--ai-pale); color: var(--ai); border-color: transparent; }
+
+/* La réponse : un bandeau, puis le récapitulatif en quatre cases. */
+.exercice-session .correction { max-width: 30rem; margin: 1.5rem auto 0; padding-top: 0; border-top: 0; }
+.exercice-session .correction-tete {
+  justify-content: flex-start; gap: 0.7rem; padding: 0.8rem 1rem; border-radius: 12px; text-align: left;
+}
+.exercice-session .correction-bonne .correction-tete { background: var(--acquis-pale); }
+.exercice-session .correction-fausse .correction-tete { background: var(--erreur-pale); }
+.exercice-session .correction-tete strong { font-family: var(--police-titre); font-size: 1rem; }
+.exercice-session .note-trait { width: 2rem; height: 2rem; }
+.exercice-session .correction-details {
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); margin: 1rem 0 1.1rem; padding-top: 1rem;
+  border-top: 1px dashed var(--trait-fort);
+}
+@media (max-width: 560px) { .exercice-session .correction-details { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.exercice-session .correction-details div { border-radius: 10px; background: var(--papier-2); }
+.exercice-session .correction-details dd { font-weight: 700; }
+.exercice-session .correction [data-suivant] { width: 100%; min-height: 3.2rem; border-radius: 12px; font-size: 1rem; }
+
+/* ---------- Paires : la corbeille (25/10/2026) ----------------------------
+   Glisser une tuile dessus (ou la toucher puis toucher la corbeille) écarte
+   le mot et son autre écriture. */
+.corbeille {
+  display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+  width: 100%; margin-top: 1.1rem; padding: 0.85rem 1rem;
+  border: 1.5px dashed var(--trait-fort); border-radius: 12px;
+  background: transparent; color: var(--encre-3); font-size: 0.84rem; text-align: left;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.corbeille .icone { width: 1.4rem; height: 1.4rem; flex: none; }
+.corbeille:hover, .corbeille.tuile-survolee { border-color: var(--erreur); border-style: solid; background: var(--erreur-pale); color: var(--erreur); }
+.corbeille-pleine .icone { animation: secousse 0.35s; }
+.tuile-ecartee { opacity: 0.18; text-decoration: line-through; transform: scale(0.94); transition: opacity 0.25s, transform 0.25s; }
+.tuile-ecartee:disabled { cursor: default; }
+
+/* ---------- Exercices revus le 25/10 : dictée, choix de lecture, voix ---- */
+/* Le choix de la lecture : quatre tuiles larges (des mots, pas un caractère). */
+.tuiles-larges { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 26rem; }
+.tuiles-larges .tuile { aspect-ratio: auto; min-height: 3.6rem; padding: 0.6rem; font-size: 1.35rem; background-image: none; border-radius: 12px; }
+/* La dictée : un grand bouton à toucher pour réentendre. */
+.dictee { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding: 0.5rem 0; }
+.bouton-ecoute {
+  display: grid; place-items: center; width: 5.5rem; height: 5.5rem; border: 0; border-radius: 50%;
+  background: var(--ai-pale); color: var(--ai); box-shadow: var(--ombre-douce);
+  transition: transform 0.1s;
+}
+.bouton-ecoute:hover { transform: scale(1.04); }
+.bouton-ecoute .icone { width: 2.4rem; height: 2.4rem; }
+/* Écouter le mot depuis la correction ; grisé sans voix japonaise (son.js). */
+.correction-tete .bouton-ecouter { margin-left: auto; flex: none; }
+.bouton-ecouter:disabled { opacity: 0.45; cursor: not-allowed; }
+.correction-note { display: block; margin-top: 0.15rem; font-size: 0.86rem; color: var(--encre-2); }
+/* « Le rōmaji ne compte pas ici » : sous le champ, avant correction. */
+.message-saisie { min-height: 0; margin: 0.4rem auto 0; max-width: 30rem; font-size: 0.88rem; color: var(--revoir-texte); }
+.message-saisie:empty { display: none; }
+/* Le jeu des kana dans le sens « écrire » : la lecture en grand. */
+.question-romaji { margin: 0.3rem 0 0.8rem; font-family: var(--police-titre); font-size: clamp(3rem, 14vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+/* Six états dans le filtre de l'accueil (25/10) : trois par ligne plutôt
+   qu'une rangée qui déborde dans le panneau étroit. */
+.panneau-selection .segments-rangee { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.panneau-selection .segments span { padding-inline: 0.4rem; border-top: 1px solid var(--trait); }
+.panneau-selection .segments label:nth-child(3n + 1) span { border-left: 0; }
+.panneau-selection .segments label:nth-child(-n + 3) span { border-top: 0; }

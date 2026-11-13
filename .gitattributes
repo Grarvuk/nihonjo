@@ -14,6 +14,11 @@
 *.css  text eol=lf working-tree-encoding=UTF-8
 *.json text eol=lf working-tree-encoding=UTF-8
 *.md   text eol=lf working-tree-encoding=UTF-8
+*.php  text eol=lf working-tree-encoding=UTF-8
+*.mjs  text eol=lf working-tree-encoding=UTF-8
+# Fichiers de commandes Windows : CRLF obligatoire, sinon cmd.exe saute des lignes
+# (les etiquettes « :xxx » et les « goto » se lisent mal avec des fins LF).
+*.bat  text eol=crlf
 
 # -----------------------------------------------------------------------------
 # Gestion des fichiers binaires (images, icônes)
@@ -24,6 +29,7 @@
 *.jpeg binary
 *.gif binary
 *.ico binary
+*.sqlite binary
 
 # -----------------------------------------------------------------------------
 # Cas particuliers

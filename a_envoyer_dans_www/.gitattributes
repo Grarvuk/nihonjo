@@ -1,0 +1,33 @@
+# -----------------------------------------------------------------------------
+# Configuration globale Nihonjo
+# -----------------------------------------------------------------------------
+
+# Définir le comportement par défaut : Git gère les fins de lignes automatiquement
+* text=auto
+
+# -----------------------------------------------------------------------------
+# Encodage UTF-8 forcé pour préserver les Kanjis/Kanas
+# -----------------------------------------------------------------------------
+
+*.html text eol=lf working-tree-encoding=UTF-8
+*.js   text eol=lf working-tree-encoding=UTF-8
+*.css  text eol=lf working-tree-encoding=UTF-8
+*.json text eol=lf working-tree-encoding=UTF-8
+*.md   text eol=lf working-tree-encoding=UTF-8
+
+# -----------------------------------------------------------------------------
+# Gestion des fichiers binaires (images, icônes)
+# -----------------------------------------------------------------------------
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
+# -----------------------------------------------------------------------------
+# Cas particuliers
+# -----------------------------------------------------------------------------
+
+# Empêcher Git de modifier les fins de lignes dans certains fichiers si nécessaire
+.gitignore text eol=lf
